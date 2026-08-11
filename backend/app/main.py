@@ -6,7 +6,9 @@ This module initializes the FastAPI application.
 
 from fastapi import FastAPI
 
-app = FastAPI(title="Billax 2.0 API", version="0.1.0")
+from app.config.settings import settings
+
+app = FastAPI(title=settings.app_name, version=settings.app_version)
 
 
 @app.get("/")
