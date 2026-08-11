@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     app_version: str
     environment: str
     debug: bool
+    database_url: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
