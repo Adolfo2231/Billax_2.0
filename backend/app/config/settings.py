@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     environment: str
     debug: bool
     database_url: str
+    frontend_url: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
