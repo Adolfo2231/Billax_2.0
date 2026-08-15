@@ -10,10 +10,12 @@ from uuid import UUID, uuid4
 
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import DateTime
 
 
 class Base(DeclarativeBase):
     """Base declarative class for all SQLAlchemy ORM models."""
+    pass
 
 
 class BaseModel(Base):
@@ -28,11 +30,13 @@ class BaseModel(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
 
     updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
         nullable=False,
