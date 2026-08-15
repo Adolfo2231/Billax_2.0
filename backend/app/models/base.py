@@ -8,14 +8,13 @@ database models to provide shared UUID and timestamp fields.
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
 
+from sqlalchemy import DateTime
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import DateTime
 
 
 class Base(DeclarativeBase):
     """Base declarative class for all SQLAlchemy ORM models."""
-    pass
 
 
 class BaseModel(Base):
