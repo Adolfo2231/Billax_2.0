@@ -1,6 +1,4 @@
-"""
-User schemas
-"""
+"""Pydantic schemas for user registration, login, and responses."""
 
 from datetime import datetime
 from uuid import UUID
@@ -9,6 +7,8 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserRegister(BaseModel):
+    """Validate incoming user registration data."""
+
     email: EmailStr
     password: str = Field(min_length=8)
     first_name: str | None = Field(
@@ -24,11 +24,15 @@ class UserRegister(BaseModel):
 
 
 class UserLogin(BaseModel):
+    """Validate incoming user login credentials."""
+
     email: EmailStr
     password: str
 
 
 class UserResponse(BaseModel):
+    """Serialize user data for API responses."""
+
     id: UUID
     email: EmailStr
     is_active: bool
