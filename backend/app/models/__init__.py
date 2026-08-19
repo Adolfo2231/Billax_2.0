@@ -1,9 +1,4 @@
-"""
-Database models for the Billax 2.0 application.
-
-Exports the SQLAlchemy declarative base, shared base model,
-and application database models.
-"""
+"""Public exports for SQLAlchemy database models."""
 
 from .base import Base, BaseModel
 from .user import User
