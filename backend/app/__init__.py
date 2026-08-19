@@ -1,1 +1,1 @@
-"""Billax 2.0 API"""
+"""Billax 2.0 API package."""
