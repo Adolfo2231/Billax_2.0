@@ -1,9 +1,4 @@
-"""
-User database model for the Billax 2.0 application.
-
-Defines the User SQLAlchemy model, including authentication,
-profile, and account status fields.
-"""
+"""User SQLAlchemy model for authentication and profile data."""
 
 from sqlalchemy.orm import Mapped, mapped_column
 
