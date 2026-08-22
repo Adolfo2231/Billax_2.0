@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     debug: bool
     database_url: str
     frontend_url: str
+    access_token_expire_minutes: int
+    secret_key: str
+    algorithm: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
