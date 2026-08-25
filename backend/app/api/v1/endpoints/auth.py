@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from app.api.v1.dependencies import get_user_service
-from app.schema import UserRegister, UserResponse
+from app.schema import LoginResponse, UserLogin, UserRegister, UserResponse
 from app.service.user import UserService
 
 router = APIRouter(
@@ -25,3 +25,16 @@ def register(
 ) -> UserResponse:
     """Register a new user and return the created user data."""
     return service.register(user_data)
+
+
+@router.post(
+    "/login",
+    response_model=LoginResponse,
+    status_code=status.HTTP_200_OK,
+)
+def login(
+    user_data: UserLogin,
+    service: Annotated[UserService, Depends(get_user_service)],
+) -> LoginResponse:
+    """Login a user and return the access token."""
+    return service.login(user_data)
