@@ -42,3 +42,10 @@ class UserResponse(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class LoginResponse(BaseModel):
+    """Serialize user token for API response"""
+
+    access_token: str
+    token_type: str
