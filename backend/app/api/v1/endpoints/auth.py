@@ -4,7 +4,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
-from app.api.v1.dependencies import get_user_service
+from app.api.v1.dependencies import get_current_user, get_user_service
+from app.models import User
 from app.schema import LoginResponse, UserLogin, UserRegister, UserResponse
 from app.service.user import UserService
 
@@ -38,3 +39,9 @@ def login(
 ) -> LoginResponse:
     """Login a user and return the access token."""
     return service.login(user_data)
+
+
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: Annotated[User, Depends(get_current_user)]) -> UserResponse:
+    """Get the current user's profile."""
+    return UserResponse(current_user)
