@@ -44,4 +44,4 @@ def login(
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: Annotated[User, Depends(get_current_user)]) -> UserResponse:
     """Get the current user's profile."""
-    return UserResponse(current_user)
+    return current_user
