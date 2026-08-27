@@ -12,11 +12,13 @@ class UserService:
     """Handle user-related business rules."""
 
     def __init__(self, user_repository: UserRepository):
+        """Initialize the service with a user repository dependency."""
+
         self.user_repository = user_repository
 
     def register(self, user_data: UserRegister) -> User:
         """Register a new user after validating email uniqueness."""
-        
+
         exist_user = self.user_repository.get_by_email(user_data.email)
 
         if exist_user is not None:
@@ -29,7 +31,7 @@ class UserService:
             password_hash=password_hash,
         )
 
-        return self.user_repository.create_user(user)
+        return self.user_repository.create(user)
 
     def authenticate_user(self, user_data: UserLogin) -> User | None:
         """Authenticate a user and return the user if successful."""

@@ -1,40 +1,25 @@
 """Data access layer for user persistence and queries."""
 
-from uuid import UUID
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import User
 
+from .base import BaseRepository
 
-class UserRepository:
+
+class UserRepository(BaseRepository[User]):
     """Handle user persistence and database queries."""
 
     def __init__(self, db: Session):
-        self.db = db
+        """Initialize the user repository with a database session."""
+
+        super().__init__(db=db, model=User)
 
     def get_by_email(self, email: str) -> User | None:
         """Return a user by email, or None if no user exists."""
 
         statement = select(User).where(User.email == email)
-
-        result = self.db.execute(statement)
-
-        return result.scalar_one_or_none()
-
-    def create_user(self, user: User) -> User:
-        """Persist a new user in the database and return it."""
-
-        self.db.add(user)
-        self.db.flush()
-        self.db.refresh(user)
-
-        return user
-
-    def get_by_id(self, user_id=UUID) -> User | None:
-
-        statement = select(User).where(User.id == user_id)
 
         result = self.db.execute(statement)
 
