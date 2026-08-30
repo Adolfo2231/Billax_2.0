@@ -13,7 +13,7 @@ async def user_already_exists_handler(
     """Return a 409 response when registration email already exists."""
     return JSONResponse(
         status_code=status.HTTP_409_CONFLICT,
-        content=exc.message,
+        content={"detail": exc.message},
     )
 
 
@@ -24,7 +24,7 @@ async def authentication_error_handler(
     """Return a 401 response when user is unautorized"""
     return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        content=exc.message,
+        content={"detail": exc.message},
     )
 
 

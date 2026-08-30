@@ -12,6 +12,6 @@ class UserAlreadyExistsError(Exception):
 class AuthenticationError(Exception):
     """Raised when user authentication fails."""
 
-    def __init__(self, message: str = "Invalid Credentials") -> None:
+    def __init__(self, message: str = "Invalid credentials") -> None:
         self.message = message
         super().__init__(message)
