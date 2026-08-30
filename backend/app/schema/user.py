@@ -27,7 +27,7 @@ class UserLogin(BaseModel):
     """Validate incoming user login credentials."""
 
     email: EmailStr
-    password: str
+    password: str = Field(min_length=8)
 
 
 class UserResponse(BaseModel):
