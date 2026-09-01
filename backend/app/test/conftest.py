@@ -1,4 +1,8 @@
-"""Pytest configuration and shared fixtures for API integration tests."""
+"""Shared fixtures and database configuration for authentication tests.
+
+Provide test database sessions, override the application database
+dependency, and manage table setup and teardown for API tests.
+"""
 
 import pytest
 from fastapi.testclient import TestClient
@@ -49,3 +53,10 @@ def client():
         yield test_client
 
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture
+def db_session(client):
+    """Provide a test database session while the client fixture is active."""
+    with TestSessionLocal() as db:
+        yield db
