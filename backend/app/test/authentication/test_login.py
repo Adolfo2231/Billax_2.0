@@ -1,125 +1,15 @@
-"""Integration tests for authentication endpoints and protected routes."""
+"""Integration tests for login and protected profile access.
+
+Cover successful login, credential validation, Bearer authentication,
+and rejection of invalid tokens or nonexistent users.
+"""
 
 from uuid import uuid4
 
-from app.core import create_access_token
+from sqlalchemy import select
 
-
-def test_register_success(client):
-    """Verify that a valid user registration returns 201."""
-    response = client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": "test@example.com",
-            "password": "passwordtest",
-            "first_name": "Test",
-            "last_name": "User",
-        },
-    )
-
-    assert response.status_code == 201
-
-    data = response.json()
-
-    assert data["email"] == "test@example.com"
-    assert data["first_name"] == "Test"
-    assert data["last_name"] == "User"
-    assert data["is_active"] is True
-
-
-def test_register_without_first_and_lastname(client):
-    """Verify that optional first and last names are not required."""
-    response = client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": "test@example.com",
-            "password": "passwordtest",
-        },
-    )
-
-    assert response.status_code == 201
-
-    data = response.json()
-
-    assert data["email"] == "test@example.com"
-    assert data["is_active"] is True
-
-
-def test_register_with_empty_email(client):
-    """Verify that registration rejects an empty email."""
-    response = client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": "",
-            "password": "passwordtest",
-        },
-    )
-
-    assert response.status_code == 422
-
-
-def test_register_without_email(client):
-    """Verify that registration rejects a missing email field."""
-    response = client.post(
-        "/api/v1/auth/register",
-        json={
-            "password": "passwordtest",
-        },
-    )
-
-    assert response.status_code == 422
-
-
-def test_register_with_empty_password(client):
-    """Verify that registration rejects an empty password."""
-    response = client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": "test@example.com",
-            "password": "",
-        },
-    )
-
-    assert response.status_code == 422
-
-
-def test_register_without_password(client):
-    """Verify that registration rejects a missing password field."""
-    response = client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": "test@example.com",
-        },
-    )
-
-    assert response.status_code == 422
-
-
-def test_register_duplicate_email(client):
-    """Verify that registering an existing email returns 409."""
-    response = client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": "test@example.com",
-            "password": "passwordtest",
-        },
-    )
-
-    assert response.status_code == 201
-
-    response2 = client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": "test@example.com",
-            "password": "passwordtest",
-        },
-    )
-
-    assert response2.status_code == 409
-
-    data = response2.json()
-
-    assert data["detail"] == "Email already exist"
+from app.core.jwt import create_access_token
+from app.models import User
 
 
 def test_login_success(client):
@@ -347,3 +237,79 @@ def test_me_with_nonexistent_user(client):
     data = response.json()
 
     assert data["detail"] == "Invalid credentials"
+
+
+def test_login_with_inactive_user(client, db_session):
+    """Reject valid credentials when the user is inactive."""
+    credentials = {
+        "email": "inactive@example.com",
+        "password": "passwordtest",
+    }
+
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json=credentials,
+    )
+    assert register_response.status_code == 201
+
+    user = db_session.execute(
+        select(User).where(User.email == credentials["email"])
+    ).scalar_one()
+
+    user.is_active = False
+    db_session.commit()
+
+    response = client.post(
+        "/api/v1/auth/login",
+        json=credentials,
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_me_with_user_deactivated_after_login(client, db_session):
+    """Reject an existing access token after its user is deactivated."""
+    credentials = {
+        "email": "deactivated@example.com",
+        "password": "passwordtest",
+    }
+
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json=credentials,
+    )
+    assert register_response.status_code == 201
+
+    login_response = client.post(
+        "/api/v1/auth/login",
+        json=credentials,
+    )
+    assert login_response.status_code == 200
+
+    token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Confirm the token works before deactivation.
+    assert (
+        client.get(
+            "/api/v1/auth/me",
+            headers=headers,
+        ).status_code
+        == 200
+    )
+
+    user = db_session.execute(
+        select(User).where(User.email == credentials["email"])
+    ).scalar_one()
+
+    user.is_active = False
+    db_session.commit()
+
+    response = client.get(
+        "/api/v1/auth/me",
+        headers=headers,
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid credentials"

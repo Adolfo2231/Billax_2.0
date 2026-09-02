@@ -1,4 +1,8 @@
-"""Tests for JWT access token generation and validation."""
+"""Unit tests for JWT access token creation and validation.
+
+Cover valid token decoding and rejection of malformed tokens,
+missing subject claims, and expired tokens.
+"""
 
 from datetime import datetime, timedelta, timezone
 

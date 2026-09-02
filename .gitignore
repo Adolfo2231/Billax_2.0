@@ -1,6 +1,7 @@
 # Environment
 .env
 .env.*
+.ruff_cache/
 
 # OS
 .DS_Store

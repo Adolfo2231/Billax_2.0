@@ -30,8 +30,8 @@ class BaseRepository(Generic[ModelType]):
     def get_by_id(self, obj_id: UUID) -> ModelType | None:
         """Return an entity by primary key, or None if it does not exist."""
 
-        statment = select(self.model).where(self.model.id == obj_id)
+        statement = select(self.model).where(self.model.id == obj_id)
 
-        result = self.db.execute(statment)
+        result = self.db.execute(statement)
 
         return result.scalar_one_or_none()
