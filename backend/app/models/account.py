@@ -1,3 +1,5 @@
+"""SQLAlchemy model for user-owned financial accounts."""
+
 from decimal import Decimal
 from enum import Enum as PyEnum
 from typing import TYPE_CHECKING

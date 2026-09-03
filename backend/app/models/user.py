@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .account import Account
+    from .category import Category
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -30,3 +31,5 @@ class User(BaseModel):
     last_name: Mapped[str | None] = mapped_column(nullable=True)
 
     accounts: Mapped[list["Account"]] = relationship(back_populates="user")
+
+    categories: Mapped[list["Category"]] = relationship(back_populates="user")
