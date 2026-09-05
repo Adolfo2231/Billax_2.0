@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 if TYPE_CHECKING:
+    from .transaction import Transaction
     from .user import User
 
 from sqlalchemy import Enum as SAEnum
@@ -54,3 +55,5 @@ class Account(BaseModel):
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
     user: Mapped["User"] = relationship(back_populates="accounts")
+
+    transactions: Mapped[list["Transaction"]] = relationship(back_populates="account")

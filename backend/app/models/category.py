@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import BaseModel
 
 if TYPE_CHECKING:
+    from .transaction import Transaction
     from .user import User
 
 
@@ -27,3 +28,5 @@ class Category(BaseModel):
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True)
 
     user: Mapped["User"] = relationship(back_populates="categories")
+
+    transactions: Mapped[list["Transaction"]] = relationship(back_populates="category")
