@@ -24,8 +24,8 @@ def test_login_success(client):
 
     response = client.post(
         "/api/v1/auth/login",
-        json={
-            "email": "test@example.com",
+        data={
+            "username": "test@example.com",
             "password": "passwordtest",
         },
     )
@@ -50,8 +50,8 @@ def test_login_with_empty_email(client):
 
     response = client.post(
         "/api/v1/auth/login",
-        json={
-            "email": "",
+        data={
+            "username": "",
             "password": "passwordtest",
         },
     )
@@ -71,7 +71,7 @@ def test_login_without_email(client):
 
     response = client.post(
         "/api/v1/auth/login",
-        json={
+        data={
             "password": "passwordtest",
         },
     )
@@ -91,8 +91,8 @@ def test_login_with_empty_password(client):
 
     response = client.post(
         "/api/v1/auth/login",
-        json={
-            "email": "test@example.com",
+        data={
+            "username": "test@example.com",
             "password": "",
         },
     )
@@ -112,8 +112,8 @@ def test_login_without_password(client):
 
     response = client.post(
         "/api/v1/auth/login",
-        json={
-            "email": "tes@example.com",
+        data={
+            "username": "test@example.com",
         },
     )
 
@@ -132,8 +132,8 @@ def test_login_with_wrong_password(client):
 
     response = client.post(
         "/api/v1/auth/login",
-        json={
-            "email": "test@example.com",
+        data={
+            "username": "test@example.com",
             "password": "password333",
         },
     )
@@ -145,8 +145,8 @@ def test_login_with_nonexistent_email(client):
     """Verify that login with an unknown email returns 401."""
     response = client.post(
         "/api/v1/auth/login",
-        json={
-            "email": "test@example.com",
+        data={
+            "username": "test@example.com",
             "password": "passwordtest",
         },
     )
@@ -166,8 +166,8 @@ def test_me_success(client):
 
     login_response = client.post(
         "/api/v1/auth/login",
-        json={
-            "email": "test@example.com",
+        data={
+            "username": "test@example.com",
             "password": "passwordtest",
         },
     )
@@ -222,7 +222,6 @@ def test_me_with_wrong_token(client):
 def test_me_with_nonexistent_user(client):
     """Verify that a valid token for a nonexistent user returns 401."""
     nonexistent_user_id = str(uuid4())
-
     token = create_access_token(nonexistent_user_id)
 
     response = client.get(
@@ -250,6 +249,7 @@ def test_login_with_inactive_user(client, db_session):
         "/api/v1/auth/register",
         json=credentials,
     )
+
     assert register_response.status_code == 201
 
     user = db_session.execute(
@@ -261,7 +261,10 @@ def test_login_with_inactive_user(client, db_session):
 
     response = client.post(
         "/api/v1/auth/login",
-        json=credentials,
+        data={
+            "username": credentials["email"],
+            "password": credentials["password"],
+        },
     )
 
     assert response.status_code == 401
@@ -279,12 +282,17 @@ def test_me_with_user_deactivated_after_login(client, db_session):
         "/api/v1/auth/register",
         json=credentials,
     )
+
     assert register_response.status_code == 201
 
     login_response = client.post(
         "/api/v1/auth/login",
-        json=credentials,
+        data={
+            "username": credentials["email"],
+            "password": credentials["password"],
+        },
     )
+
     assert login_response.status_code == 200
 
     token = login_response.json()["access_token"]
