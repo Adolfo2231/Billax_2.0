@@ -1,124 +1,143 @@
 # Billax 2.0
 
-Billax 2.0 is a personal finance application built with **FastAPI** and **PostgreSQL**.
+[![Backend CI](https://github.com/Adolfo2231/Billax_2.0/actions/workflows/backend-ci.yml/badge.svg?branch=dev)](https://github.com/Adolfo2231/Billax_2.0/actions/workflows/backend-ci.yml)
 
-The project is currently under development. The backend MVP currently focuses on authentication and establishing the foundation for future financial features.
+Personal finance backend built with FastAPI and PostgreSQL.
 
-## Backend Stack
+Billax 2.0 demonstrates layered backend architecture, JWT authentication, relational data modeling, database migrations, automated testing and continuous integration.
 
-* Python 3.12
-* FastAPI
-* SQLAlchemy
-* PostgreSQL
-* Alembic
-* Pydantic
-* bcrypt
-* python-jose
-* pytest
+## Tech stack
 
-## Current Features
+Python 3.12 · FastAPI · SQLAlchemy · PostgreSQL · Alembic · Pydantic · JWT/OAuth2 · pytest · Ruff · Docker · GitHub Actions
 
-* User registration
-* Password hashing
-* Login with JWT access tokens
-* Protected user profile endpoint
-* Inactive-user validation
-* Authentication and JWT tests
+## Implemented
 
-Refresh tokens and financial features are planned for later development.
+- User registration with password hashing.
+- OAuth2 login with JWT access tokens.
+- Protected current-user endpoint.
+- Inactive-user validation.
+- User, Account, Category and Transaction models.
+- PostgreSQL migrations with Alembic.
+- Dockerized FastAPI and PostgreSQL environment.
+- Automated backend quality checks and tests.
+- 24 passing tests.
 
 ## Architecture
 
-The backend uses a layered structure:
+```text
+backend/app/
+├── api/            # Endpoints and HTTP dependencies
+├── service/        # Business logic
+├── repositories/   # Database access
+├── models/         # SQLAlchemy models
+├── schema/         # Pydantic request/response schemas
+├── core/           # Security, JWT and exceptions
+├── config/         # Environment settings
+├── database/       # Engine, sessions and dependencies
+└── test/           # Backend tests
+```
 
-* `api/` — endpoints, dependencies, and exception handlers
-* `service/` — business logic and authentication
-* `repositories/` — database access
-* `models/` — SQLAlchemy models
-* `schema/` — Pydantic schemas
-* `core/` — JWT, password hashing, and custom exceptions
-* `config/` — application settings
-* `database/` — database configuration and sessions
-* `test/` — automated tests
+Request flow:
 
-## Local Setup
+```text
+HTTP request → API → Service → Repository → PostgreSQL
+```
 
-From the repository root:
+## Run with Docker
+
+Requirements:
+
+- Docker Desktop
+- Docker Compose
+
+From the project root:
+
+```bash
+docker compose up --build -d
+```
+
+Verify the services:
+
+```bash
+docker compose ps
+curl http://127.0.0.1:8000/
+```
+
+Open:
+
+- Swagger UI: http://127.0.0.1:8000/docs
+- OpenAPI: http://127.0.0.1:8000/openapi.json
+
+Stop the environment:
+
+```bash
+docker compose down
+```
+
+> Running `docker compose down -v` also deletes the local PostgreSQL data.
+
+## Local backend setup
 
 ```bash
 cd backend
-
 python3.12 -m venv venv
 source venv/bin/activate
-
 python -m pip install -r requirements.txt
-
-cp -n .env.example .env
+cp .env.example .env
 ```
 
-Configure `.env`, especially:
+Configure both PostgreSQL databases in `.env`:
 
-* `DATABASE_URL`
-* `SECRET_KEY`
-
-Create the database:
-
-```bash
-createdb -h 127.0.0.1 -U YOUR_DB_USER billax
+```env
+DATABASE_URL=postgresql://user:password@127.0.0.1:5432/billax
+TEST_DATABASE_URL=postgresql://user:password@127.0.0.1:5432/billax_test
+SECRET_KEY=replace-with-a-local-secret-key
 ```
 
-Apply migrations:
+Apply migrations and start the API:
 
 ```bash
 python -m alembic upgrade head
-```
-
-Start the API:
-
-```bash
 python -m uvicorn app.main:app --reload
 ```
 
-Swagger documentation:
+## API endpoints
 
-```text
-http://127.0.0.1:8000/docs
-```
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/v1/auth/register` | Register a user |
+| `POST` | `/api/v1/auth/login` | Obtain an access token |
+| `GET` | `/api/v1/auth/me` | Get the authenticated user |
 
-## Authentication Endpoints
+The login endpoint uses the OAuth2 password form. The email is sent through the standard `username` field.
 
-| Method | Endpoint                | Purpose                          |
-| ------ | ----------------------- | -------------------------------- |
-| `POST` | `/api/v1/auth/register` | Register a user                  |
-| `POST` | `/api/v1/auth/login`    | Login and obtain an access token |
-| `GET`  | `/api/v1/auth/me`       | Get the authenticated user       |
+## Tests and quality
 
-Protected routes require:
-
-```text
-Authorization: Bearer <access_token>
-```
-
-## Tests
-
-Tests use a separate PostgreSQL database.
+From `backend/`:
 
 ```bash
-createdb -h 127.0.0.1 -U YOUR_DB_USER billax_test
-```
-
-Update `TEST_DATABASE_URL` in:
-
-```text
-app/test/conftest.py
-```
-
-Run the test suite:
-
-```bash
+python -m ruff format --check .
+python -m ruff check .
 python -m pytest -q
 ```
 
-## Project Status
+Current result:
 
-The current focus is building a solid backend foundation with authentication, database persistence, migrations, and automated testing before implementing the main personal-finance features.
+```text
+24 passed
+```
+
+## Continuous integration
+
+GitHub Actions runs on pull requests targeting `dev` and pushes to `dev`.
+
+The workflow starts PostgreSQL and validates:
+
+- Ruff formatting and linting.
+- Alembic migrations.
+- SQLAlchemy migration consistency.
+- The complete pytest suite.
+
+## MVP status
+
+The backend foundation is complete. Current development is focused on CRUD operations and ownership rules for accounts, categories and transactions.
