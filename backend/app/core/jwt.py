@@ -1,6 +1,6 @@
 """JWT access token creation and decoding utilities."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from jose import JWTError, jwt
 
@@ -10,9 +10,7 @@ from app.config import settings
 def create_access_token(subject: str) -> str:
     """Create a signed JWT access token for the given subject."""
 
-    expire = datetime.now(timezone.utc) + timedelta(
-        minutes=settings.access_token_expire_minutes
-    )
+    expire = datetime.now(UTC) + timedelta(minutes=settings.access_token_expire_minutes)
 
     payload = {
         "sub": subject,

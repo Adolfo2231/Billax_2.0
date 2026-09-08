@@ -4,7 +4,7 @@ Cover valid token decoding and rejection of malformed tokens,
 missing subject claims, and expired tokens.
 """
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from jose import JWTError, jwt
@@ -36,9 +36,7 @@ def test_jwt_invalid_access_token():
 def test_jwt_without_sub():
     """Verify that a token without a subject claim is rejected."""
 
-    expire = datetime.now(timezone.utc) + timedelta(
-        minutes=settings.access_token_expire_minutes
-    )
+    expire = datetime.now(UTC) + timedelta(minutes=settings.access_token_expire_minutes)
 
     payload = {
         "exp": expire,
@@ -53,7 +51,7 @@ def test_jwt_without_sub():
 def test_jwt_expired_access_token():
     """Verify that an expired access token raises JWTError."""
 
-    expire = datetime.now(timezone.utc) - timedelta(minutes=1)
+    expire = datetime.now(UTC) - timedelta(minutes=1)
 
     payload = {
         "sub": "user123",

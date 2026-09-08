@@ -1,15 +1,12 @@
 """Generic repository base class with shared CRUD operations."""
 
-from typing import Generic, TypeVar
 from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-ModelType = TypeVar("ModelType")
 
-
-class BaseRepository(Generic[ModelType]):
+class BaseRepository[ModelType]:
     """Provide common database persistence operations for a SQLAlchemy model."""
 
     def __init__(self, db: Session, model: type[ModelType]) -> None:

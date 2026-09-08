@@ -3,6 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.v1.dependencies import get_current_user, get_user_service
 from app.models import User
@@ -34,10 +35,16 @@ def register(
     status_code=status.HTTP_200_OK,
 )
 def login(
-    user_data: UserLogin,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     service: Annotated[UserService, Depends(get_user_service)],
 ) -> LoginResponse:
-    """Login a user and return the access token."""
+    """Login a user using OAuth2 form credentials."""
+
+    user_data = UserLogin(
+        email=form_data.username,
+        password=form_data.password,
+    )
+
     return service.login(user_data)
 
 
