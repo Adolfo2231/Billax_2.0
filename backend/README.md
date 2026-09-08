@@ -20,7 +20,8 @@ Python 3.12 · FastAPI · SQLAlchemy · PostgreSQL · Alembic · Pydantic · JWT
 - PostgreSQL migrations with Alembic.
 - Dockerized FastAPI and PostgreSQL environment.
 - Automated backend quality checks and tests.
-- 24 passing tests.
+- Pydantic schemas for authentication, users and accounts.
+- 29 passing tests.
 
 ## Architecture
 
@@ -124,7 +125,7 @@ python -m pytest -q
 Current result:
 
 ```text
-24 passed
+29 passed
 ```
 
 ## Continuous integration
@@ -140,4 +141,6 @@ The workflow starts PostgreSQL and validates:
 
 ## MVP status
 
-The backend foundation is complete. Current development is focused on CRUD operations and ownership rules for accounts, categories and transactions.
+The backend foundation is in place: authentication, relational data models, database migrations, Docker support and continuous integration are implemented.
+
+Current development is focused on CRUD endpoints and ownership rules for accounts, categories and transactions.
