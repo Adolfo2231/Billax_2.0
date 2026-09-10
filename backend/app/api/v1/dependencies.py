@@ -9,7 +9,9 @@ from sqlalchemy.orm import Session
 from app.database.dependencies import get_db
 from app.models import User
 from app.repositories import UserRepository
+from app.repositories.account import AccountRepository
 from app.service import UserService
+from app.service.account import AccountService
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/login",
@@ -32,3 +34,12 @@ def get_current_user(
     """Return the authenticated user from the Bearer access token."""
 
     return service.get_user_from_access_token(token)
+
+
+def get_account_service(
+    db: Annotated[Session, Depends(get_db)],
+) -> AccountService:
+
+    repository = AccountRepository(db)
+
+    return AccountService(repository)
