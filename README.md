@@ -117,12 +117,12 @@ python -m ruff check .
 python -m pytest -q
 ```
 
-The current test suite contains 29 passing tests.
+The current test suite contains 32 passing tests.
 
 GitHub Actions runs the same backend checks on:
 
-* Pull requests targeting `dev`.
-* Pushes to `dev`.
+* Pull requests targeting `dev` or `main`.
+* Pushes to `dev` or `main`.
 
 The workflow also starts PostgreSQL, applies the migrations and verifies that the SQLAlchemy models are synchronized with Alembic.
 
