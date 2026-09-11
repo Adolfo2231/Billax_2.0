@@ -127,12 +127,12 @@ python -m pytest -q
 Current result:
 
 ```text
-29 passed
+32 passed
 ```
 
 ## Continuous integration
 
-GitHub Actions runs on pull requests targeting `dev` and pushes to `dev`.
+GitHub Actions runs on pull requests targeting `dev` or `main` and pushes to `dev` or `main`.
 
 The workflow starts PostgreSQL and validates:
 
