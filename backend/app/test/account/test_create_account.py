@@ -45,6 +45,7 @@ def test_create_account_success(client):
     assert data["user_id"] == user_id
     assert data["is_active"] is True
 
+
 def test_create_account_without_token(client):
     response = client.post(
         "/api/v1/accounts/",
@@ -56,6 +57,7 @@ def test_create_account_without_token(client):
     )
 
     assert response.status_code == 401
+
 
 def test_create_account_with_invalid_account_type(client):
     credentials = {
@@ -89,4 +91,3 @@ def test_create_account_with_invalid_account_type(client):
     )
 
     assert response.status_code == 422
-
