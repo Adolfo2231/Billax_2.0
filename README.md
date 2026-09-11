@@ -25,7 +25,8 @@ The project is being developed as a monorepo with a FastAPI backend and a React 
 * PostgreSQL migrations managed with Alembic.
 * Dockerized backend and PostgreSQL services.
 * Automated formatting, linting, migration and test checks.
-* 29 passing backend tests.
+* Authenticated account creation with ownership assigned from the current user.
+* 32 passing backend tests.
 
 ## Project structure
 
@@ -129,6 +130,8 @@ The workflow also starts PostgreSQL, applies the migrations and verifies that th
 
 Billax 2.0 is under active development.
 
-Authentication, relational data models, database migrations, Docker support and continuous integration are implemented. CRUD endpoints and ownership rules for accounts, categories and transactions are the next backend development stage.
+The backend foundation is in place: authentication, relational data models, database migrations, Docker support and continuous integration are implemented.
+
+Authenticated account creation is implemented. Development is continuing with the remaining account CRUD operations and ownership rules, followed by categories and transactions.
 
 The frontend is currently in its initial development stage.

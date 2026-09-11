@@ -21,7 +21,8 @@ Python 3.12 · FastAPI · SQLAlchemy · PostgreSQL · Alembic · Pydantic · JWT
 - Dockerized FastAPI and PostgreSQL environment.
 - Automated backend quality checks and tests.
 - Pydantic schemas for authentication, users and accounts.
-- 29 passing tests.
+- Authenticated account creation with user ownership.
+- 32 passing tests.
 
 ## Architecture
 
@@ -109,6 +110,7 @@ python -m uvicorn app.main:app --reload
 | `POST` | `/api/v1/auth/register` | Register a user |
 | `POST` | `/api/v1/auth/login` | Obtain an access token |
 | `GET` | `/api/v1/auth/me` | Get the authenticated user |
+| `POST` | `/api/v1/accounts/` | Create an account for the authenticated user |
 
 The login endpoint uses the OAuth2 password form. The email is sent through the standard `username` field.
 
@@ -143,4 +145,4 @@ The workflow starts PostgreSQL and validates:
 
 The backend foundation is in place: authentication, relational data models, database migrations, Docker support and continuous integration are implemented.
 
-Current development is focused on CRUD endpoints and ownership rules for accounts, categories and transactions.
+Authenticated account creation is implemented. Development is continuing with the remaining account CRUD operations and ownership rules, followed by categories and transactions.
