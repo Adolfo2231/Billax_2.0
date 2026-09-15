@@ -5,7 +5,7 @@ from uuid import UUID
 from jose import JWTError
 
 from app.core import create_access_token, decode_access_token
-from app.core.exceptions import AuthenticationError, UserAlreadyExistsError
+from app.core.exception import AuthenticationError, UserAlreadyExistsError
 from app.core.security import hash_password, verify_password
 from app.models import User
 from app.repositories.user import UserRepository
