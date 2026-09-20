@@ -1,4 +1,8 @@
-"""Account API endpoints."""
+"""Account API endpoints.
+
+Services return ORM entities. These handlers map them to response schemas
+so the annotated return type matches the public JSON contract.
+"""
 
 from typing import Annotated
 from uuid import UUID
@@ -6,7 +10,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from app.api.v1.dependencies import get_account_service, get_current_user
-from app.models import Account, User
+from app.models import User
 from app.schema import AccountCreate, AccountResponse
 from app.service import AccountService
 
@@ -22,10 +26,11 @@ def create_account(
     current_user: Annotated[User, Depends(get_current_user)],
     account: AccountCreate,
     service: Annotated[AccountService, Depends(get_account_service)],
-) -> Account:
+) -> AccountResponse:
     """Create an account for the authenticated user."""
 
-    return service.create_account(account, current_user.id)
+    created_account = service.create_account(account, current_user.id)
+    return AccountResponse.model_validate(created_account)
 
 
 @router.get(
@@ -39,7 +44,8 @@ def list_accounts(
 ) -> list[AccountResponse]:
     """Return every account owned by the authenticated user."""
 
-    return service.list_accounts(current_user.id)
+    accounts = service.list_accounts(current_user.id)
+    return [AccountResponse.model_validate(account) for account in accounts]
 
 
 @router.get(
@@ -54,7 +60,8 @@ def get_account(
 ) -> AccountResponse:
     """Return an account owned by the authenticated user."""
 
-    return service.get_account(
+    account = service.get_account(
         current_user.id,
         account_id,
     )
+    return AccountResponse.model_validate(account)
