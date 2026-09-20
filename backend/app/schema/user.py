@@ -23,13 +23,6 @@ class UserRegister(BaseModel):
     )
 
 
-class UserLogin(BaseModel):
-    """Validate incoming user login credentials."""
-
-    email: EmailStr
-    password: str = Field(min_length=8)
-
-
 class UserResponse(BaseModel):
     """Serialize user data for API responses."""
 

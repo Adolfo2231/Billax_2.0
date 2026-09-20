@@ -154,6 +154,44 @@ def test_login_with_nonexistent_email(client):
     assert response.status_code == 401
 
 
+def test_login_with_invalid_email_format(client):
+    """Reject non-email usernames as invalid credentials, not as a server error."""
+
+    response = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": "not-an-email",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_login_with_short_password(client):
+    """Reject a short password as invalid credentials, not as a server error."""
+
+    client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "passwordtest",
+        },
+    )
+
+    response = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": "test@example.com",
+            "password": "short",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid credentials"
+
+
 def test_me_success(client):
     """Verify that an authenticated user can access the protected /me route."""
     client.post(

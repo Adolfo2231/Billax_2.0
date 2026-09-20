@@ -9,7 +9,7 @@ from app.core.exception import AuthenticationError, UserAlreadyExistsError
 from app.core.security import hash_password, verify_password
 from app.models import User
 from app.repositories.user import UserRepository
-from app.schema import LoginResponse, UserLogin, UserRegister
+from app.schema import LoginResponse, UserRegister
 
 
 class UserService:
@@ -37,15 +37,15 @@ class UserService:
 
         return self.user_repository.create(user)
 
-    def authenticate_user(self, user_data: UserLogin) -> User | None:
+    def authenticate_user(self, email: str, password: str) -> User | None:
         """Authenticate a user and return the user if successful."""
 
-        user = self.user_repository.get_by_email(user_data.email)
+        user = self.user_repository.get_by_email(email)
 
         if user is None or not user.is_active:
             return None
 
-        if not verify_password(user_data.password, user.password_hash):
+        if not verify_password(password, user.password_hash):
             return None
 
         return user
@@ -67,10 +67,10 @@ class UserService:
 
         return user
 
-    def login(self, user_data: UserLogin) -> LoginResponse:
+    def login(self, email: str, password: str) -> LoginResponse:
         """Login a user and return the access token."""
 
-        user = self.authenticate_user(user_data)
+        user = self.authenticate_user(email, password)
 
         if user is None:
             raise AuthenticationError()
