@@ -154,8 +154,24 @@ def test_login_with_nonexistent_email(client):
     assert response.status_code == 401
 
 
-def test_me_success(client):
-    """Verify that an authenticated user can access the protected /me route."""
+def test_login_with_invalid_email_format(client):
+    """Reject non-email usernames as invalid credentials, not as a server error."""
+
+    response = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": "not-an-email",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_login_with_short_password(client):
+    """Reject a short password as invalid credentials, not as a server error."""
+
     client.post(
         "/api/v1/auth/register",
         json={
@@ -164,28 +180,28 @@ def test_me_success(client):
         },
     )
 
-    login_response = client.post(
+    response = client.post(
         "/api/v1/auth/login",
         data={
             "username": "test@example.com",
-            "password": "passwordtest",
+            "password": "short",
         },
     )
 
-    token = login_response.json()["access_token"]
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_me_success(client, authenticated_user):
+    """Verify that an authenticated user can access the protected /me route."""
 
     response = client.get(
         "/api/v1/auth/me",
-        headers={
-            "Authorization": f"Bearer {token}",
-        },
+        headers=authenticated_user["headers"],
     )
 
     assert response.status_code == 200
-
-    data = response.json()
-
-    assert data["email"] == "test@example.com"
+    assert response.json()["email"] == authenticated_user["user"].email
 
 
 def test_me_without_token(client):

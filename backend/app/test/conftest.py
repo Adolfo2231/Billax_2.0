@@ -10,9 +10,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.config import settings
+from app.core.jwt import create_access_token
 from app.database.dependencies import get_db
 from app.main import app
-from app.models import Base
+from app.models import Base, User
 
 test_engine = create_engine(settings.test_database_url)
 
@@ -58,3 +59,24 @@ def db_session(client):
     """Provide a test database session while the client fixture is active."""
     with TestSessionLocal() as db:
         yield db
+
+
+@pytest.fixture
+def authenticated_user(db_session):
+    """Insert a user and return it with a valid Bearer token."""
+
+    user = User(
+        email="authenticated@example.com",
+        password_hash="fake-hash",
+        is_active=True,
+    )
+
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+
+    token = create_access_token(str(user.id))
+    return {
+        "user": user,
+        "headers": {"Authorization": f"Bearer {token}"},
+    }

@@ -1,7 +1,7 @@
-"""Public exports for user-related Pydantic schemas."""
+"""Public exports for Pydantic schemas."""
 
 from .account import AccountCreate, AccountResponse, AccountType, AccountUpdate
-from .user import LoginResponse, UserLogin, UserRegister, UserResponse
+from .user import LoginResponse, UserRegister, UserResponse
 
 __all__ = [
     "AccountCreate",
@@ -9,7 +9,6 @@ __all__ = [
     "AccountType",
     "AccountUpdate",
     "LoginResponse",
-    "UserLogin",
     "UserRegister",
     "UserResponse",
 ]
