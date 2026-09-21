@@ -192,38 +192,16 @@ def test_login_with_short_password(client):
     assert response.json()["detail"] == "Invalid credentials"
 
 
-def test_me_success(client):
+def test_me_success(client, authenticated_user):
     """Verify that an authenticated user can access the protected /me route."""
-    client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": "test@example.com",
-            "password": "passwordtest",
-        },
-    )
-
-    login_response = client.post(
-        "/api/v1/auth/login",
-        data={
-            "username": "test@example.com",
-            "password": "passwordtest",
-        },
-    )
-
-    token = login_response.json()["access_token"]
 
     response = client.get(
         "/api/v1/auth/me",
-        headers={
-            "Authorization": f"Bearer {token}",
-        },
+        headers=authenticated_user["headers"],
     )
 
     assert response.status_code == 200
-
-    data = response.json()
-
-    assert data["email"] == "test@example.com"
+    assert response.json()["email"] == authenticated_user["user"].email
 
 
 def test_me_without_token(client):
