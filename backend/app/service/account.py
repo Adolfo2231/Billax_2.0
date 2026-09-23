@@ -5,7 +5,7 @@ from uuid import UUID
 from app.core.exception import AccountNotFoundError
 from app.models import Account
 from app.repositories import AccountRepository
-from app.schema import AccountCreate
+from app.schema import AccountCreate, AccountUpdate
 
 
 class AccountService:
@@ -40,3 +40,20 @@ class AccountService:
             raise AccountNotFoundError()
 
         return account
+
+    def update_account(
+        self, user_id: UUID, account_id: UUID, account_data: AccountUpdate
+    ) -> Account:
+        """Update an owned account with only the fields that were sent."""
+
+        account = self.account_repository.get_account_by_id(user_id, account_id)
+
+        if account is None:
+            raise AccountNotFoundError()
+
+        update_data = account_data.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
+            setattr(account, key, value)
+
+        return self.account_repository.update(account)

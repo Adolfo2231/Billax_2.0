@@ -32,3 +32,12 @@ class BaseRepository[ModelType]:
         result = self.db.execute(statement)
 
         return result.scalar_one_or_none()
+
+    def update(self, obj: ModelType) -> ModelType:
+        """Persist changes to an existing entity and return it refreshed."""
+
+        self.db.add(obj)
+        self.db.flush()
+        self.db.refresh(obj)
+
+        return obj
