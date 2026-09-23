@@ -11,7 +11,7 @@ from fastapi import APIRouter, Depends, status
 
 from app.api.v1.dependencies import get_account_service, get_current_user
 from app.models import User
-from app.schema import AccountCreate, AccountResponse
+from app.schema import AccountCreate, AccountResponse, AccountUpdate
 from app.service import AccountService
 
 router = APIRouter(prefix="/accounts", tags=["Accounts"])
@@ -63,5 +63,26 @@ def get_account(
     account = service.get_account(
         current_user.id,
         account_id,
+    )
+    return AccountResponse.model_validate(account)
+
+
+@router.patch(
+    "/{account_id}",
+    response_model=AccountResponse,
+    status_code=status.HTTP_200_OK,
+)
+def update_account(
+    account_id: UUID,
+    current_user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[AccountService, Depends(get_account_service)],
+    account_data: AccountUpdate,
+) -> AccountResponse:
+    """Update an account owned by the authenticated user."""
+
+    account = service.update_account(
+        current_user.id,
+        account_id,
+        account_data,
     )
     return AccountResponse.model_validate(account)
