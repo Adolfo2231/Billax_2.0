@@ -1,29 +1,12 @@
 from uuid import uuid4
 
-from app.core.jwt import create_access_token
-from app.models import User
 
-
-def test_update_account_success(client, authenticated_user):
+def test_update_account_success(client, authenticated_user, account_owned):
     """Update only the fields sent in a partial account update."""
 
-    headers = authenticated_user["headers"]
-
-    create_response = client.post(
-        "/api/v1/accounts/",
-        headers=headers,
-        json={
-            "name": "Main Checking",
-            "account_type": "checking",
-            "balance": "250.00",
-        },
-    )
-
-    account_id = create_response.json()["id"]
-
     update_response = client.patch(
-        f"/api/v1/accounts/{account_id}",
-        headers=headers,
+        f"/api/v1/accounts/{account_owned['id']}",
+        headers=authenticated_user["headers"],
         json={"name": "Banco Popular"},
     )
 
@@ -31,9 +14,9 @@ def test_update_account_success(client, authenticated_user):
     data = update_response.json()
 
     assert data["name"] == "Banco Popular"
-    assert data["id"] == account_id
-    assert data["account_type"] == "checking"
-    assert data["balance"] == "250.00"
+    assert data["id"] == account_owned["id"]
+    assert data["account_type"] == account_owned["account_type"]
+    assert data["balance"] == account_owned["balance"]
 
 
 def test_update_account_without_token(client):
@@ -51,39 +34,14 @@ def test_update_account_without_token(client):
 
 def test_update_account_returns_404_for_different_user(
     client,
-    authenticated_user,
-    db_session,
+    account_owned,
+    other_authenticated_user,
 ):
     """Prevent a user from updating another user's account."""
 
-    create_response = client.post(
-        "/api/v1/accounts/",
-        headers=authenticated_user["headers"],
-        json={
-            "name": "Owner Checking",
-            "account_type": "checking",
-            "balance": "100.00",
-        },
-    )
-
-    account_id = create_response.json()["id"]
-
-    other_user = User(
-        email="other-user@example.com",
-        password_hash="fake-hash",
-        is_active=True,
-    )
-    db_session.add(other_user)
-    db_session.commit()
-    db_session.refresh(other_user)
-
-    other_headers = {
-        "Authorization": f"Bearer {create_access_token(str(other_user.id))}"
-    }
-
     response = client.patch(
-        f"/api/v1/accounts/{account_id}",
-        headers=other_headers,
+        f"/api/v1/accounts/{account_owned['id']}",
+        headers=other_authenticated_user["headers"],
         json={"name": "Stolen"},
     )
 
