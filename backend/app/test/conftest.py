@@ -61,16 +61,14 @@ def db_session(client):
         yield db
 
 
-@pytest.fixture
-def authenticated_user(db_session):
+def _insert_user_with_token(db_session, email: str) -> dict:
     """Insert a user and return it with a valid Bearer token."""
 
     user = User(
-        email="authenticated@example.com",
+        email=email,
         password_hash="fake-hash",
         is_active=True,
     )
-
     db_session.add(user)
     db_session.commit()
     db_session.refresh(user)
@@ -83,24 +81,42 @@ def authenticated_user(db_session):
 
 
 @pytest.fixture
+def authenticated_user(db_session):
+    """Insert the primary test user and return it with a valid Bearer token."""
+
+    return _insert_user_with_token(db_session, "authenticated@example.com")
+
+
+@pytest.fixture
 def other_authenticated_user(db_session):
     """Insert a second user and return it with a valid Bearer token."""
 
-    user = User(email="other@example.com", password_hash="fake-hash", is_active=True)
-
-    db_session.add(user)
-    db_session.commit()
-    db_session.refresh(user)
-
-    token = create_access_token(str(user.id))
-
-    return {"user": user, "headers": {"Authorization": f"Bearer {token}"}}
+    return _insert_user_with_token(db_session, "other@example.com")
 
 
 @pytest.fixture
 def account_payload():
     """Return a valid account body for API requests."""
 
-    payload = {"name": "Banco Popular", "account_type": "savings", "balance": "200.00"}
+    payload = {
+        "name": "Main Checking",
+        "account_type": "checking",
+        "balance": "250.00",
+    }
 
     return payload
+
+
+@pytest.fixture
+def account_owned(client, authenticated_user, account_payload):
+    """Create an account for the authenticated user and return its body."""
+
+    account = client.post(
+        "/api/v1/accounts/",
+        headers=authenticated_user["headers"],
+        json=account_payload,
+    )
+
+    assert account.status_code == 201
+
+    return account.json()
