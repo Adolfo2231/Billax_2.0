@@ -57,3 +57,15 @@ class AccountService:
             setattr(account, key, value)
 
         return self.account_repository.update(account)
+
+    def deactivate_account(self, user_id: UUID, account_id: UUID) -> Account:
+        """Mark an owned account inactive, or raise when it cannot be found."""
+
+        account = self.account_repository.get_account_by_id(user_id, account_id)
+
+        if account is None:
+            raise AccountNotFoundError()
+
+        account.is_active = False
+
+        return self.account_repository.update(account)
