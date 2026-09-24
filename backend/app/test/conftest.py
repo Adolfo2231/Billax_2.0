@@ -80,3 +80,27 @@ def authenticated_user(db_session):
         "user": user,
         "headers": {"Authorization": f"Bearer {token}"},
     }
+
+
+@pytest.fixture
+def other_authenticated_user(db_session):
+    """Insert a second user and return it with a valid Bearer token."""
+
+    user = User(email="other@example.com", password_hash="fake-hash", is_active=True)
+
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+
+    token = create_access_token(str(user.id))
+
+    return {"user": user, "headers": {"Authorization": f"Bearer {token}"}}
+
+
+@pytest.fixture
+def account_payload():
+    """Return a valid account body for API requests."""
+
+    payload = {"name": "Banco Popular", "account_type": "savings", "balance": "200.00"}
+
+    return payload
