@@ -1,3 +1,5 @@
+"""API tests for retrieving a user-owned account by id."""
+
 from uuid import uuid4
 
 

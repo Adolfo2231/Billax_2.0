@@ -1,3 +1,5 @@
+"""API tests for updating a user-owned account."""
+
 from uuid import uuid4
 
 
