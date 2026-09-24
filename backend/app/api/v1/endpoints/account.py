@@ -86,3 +86,20 @@ def update_account(
         account_data,
     )
     return AccountResponse.model_validate(account)
+
+
+@router.patch(
+    "/{account_id}/deactivate",
+    response_model=AccountResponse,
+    status_code=status.HTTP_200_OK,
+)
+def deactivate_account(
+    account_id: UUID,
+    current_user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[AccountService, Depends(get_account_service)],
+) -> AccountResponse:
+    """Deactivate an account owned by the authenticated user."""
+
+    account = service.deactivate_account(current_user.id, account_id)
+
+    return AccountResponse.model_validate(account)
