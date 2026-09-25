@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from app.core.exception import (
     AccountNotFoundError,
     AuthenticationError,
+    LongPasswordError,
     UserAlreadyExistsError,
 )
 
@@ -45,6 +46,18 @@ async def authentication_error_handler(
     )
 
 
+async def long_password_error_handler(
+    request: Request,
+    exc: LongPasswordError,
+) -> JSONResponse:
+    """Return a 422 response when the password exceeds bcrypt's 72-byte limit."""
+
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        content={"detail": exc.message},
+    )
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     """Register global exception handlers on the FastAPI app."""
 
@@ -60,4 +73,9 @@ def register_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(
         AuthenticationError,
         authentication_error_handler,
+    )
+
+    app.add_exception_handler(
+        LongPasswordError,
+        long_password_error_handler,
     )

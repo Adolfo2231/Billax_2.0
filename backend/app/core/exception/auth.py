@@ -19,3 +19,13 @@ class AuthenticationError(Exception):
 
         self.message = message
         super().__init__(message)
+
+
+class LongPasswordError(Exception):
+    """Raised when the password exceeds 72 bytes."""
+
+    def __init__(self, message: str = "Password too long") -> None:
+        """Initialize the exception with a safe client-facing message."""
+
+        self.message = message
+        super().__init__(message)
