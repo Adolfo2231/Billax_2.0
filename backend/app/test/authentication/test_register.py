@@ -120,3 +120,14 @@ def test_register_duplicate_email(client):
     data = response2.json()
 
     assert data["detail"] == "Email already exist"
+
+
+def test_register_password_too_long_422(client):
+    """Verify that registration rejects a password longer than 72 bytes."""
+
+    response = client.post(
+        "/api/v1/auth/register",
+        json={"email": "test@example.com", "password": "x" * 73},
+    )
+
+    assert response.status_code == 422
