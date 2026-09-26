@@ -3,6 +3,7 @@
 from uuid import UUID
 
 from jose import JWTError
+from sqlalchemy.exc import IntegrityError
 
 from app.core import create_access_token, decode_access_token
 from app.core.exception import AuthenticationError, UserAlreadyExistsError
@@ -35,7 +36,13 @@ class UserService:
             password_hash=password_hash,
         )
 
-        return self.user_repository.create(user)
+        try:
+            return self.user_repository.create(user)
+        except IntegrityError as exc:
+            message = str(exc.orig) if exc.orig is not None else str(exc)
+            if "email" in message.lower():
+                raise UserAlreadyExistsError() from exc
+            raise
 
     def authenticate_user(self, email: str, password: str) -> User | None:
         """Authenticate a user and return the user if successful."""
