@@ -337,3 +337,83 @@ def test_me_with_user_deactivated_after_login(client, db_session):
 
     assert response.status_code == 401
     assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_normalized_email(client):
+    """Verify that registration stores the email in lowercase."""
+
+    response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "AUTHENTICATED@EXAMPLE.COM",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["email"] == "authenticated@example.com"
+
+    login_response = client.post(
+        "/api/v1/auth/login",
+        data={"username": "authenticated@example.com", "password": "passwordtest"},
+    )
+
+    assert login_response.status_code == 200
+
+
+def test_login_with_uppercase_email(client):
+    """Verify that login accepts an email written in another case."""
+
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "passwordtest",
+        },
+    )
+
+    assert register_response.status_code == 201
+
+    response = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": "TEST@EXAMPLE.COM",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
+
+
+def test_login_with_email_whitespace(client):
+    """Verify that login strips whitespace around the email."""
+
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "passwordtest",
+        },
+    )
+
+    assert register_response.status_code == 201
+
+    response = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": " TEST@EXAMPLE.COM ",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
