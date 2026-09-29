@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class UserRegister(BaseModel):
@@ -21,6 +21,13 @@ class UserRegister(BaseModel):
         min_length=1,
         max_length=50,
     )
+
+    @field_validator("email")
+    @classmethod
+    def normalize(cls, value: str) -> str:
+        """Normalize the email so it is stored in lowercase."""
+
+        return value.strip().lower()
 
 
 class UserResponse(BaseModel):

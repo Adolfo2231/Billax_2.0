@@ -47,7 +47,9 @@ class UserService:
     def authenticate_user(self, email: str, password: str) -> User | None:
         """Authenticate a user and return the user if successful."""
 
-        user = self.user_repository.get_by_email(email)
+        clean_email = email.strip().lower()
+
+        user = self.user_repository.get_by_email(clean_email)
 
         if user is None or not user.is_active:
             return None
