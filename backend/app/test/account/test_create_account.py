@@ -99,3 +99,37 @@ def test_create_account_with_invalid_account_type(client, authenticated_user):
     )
 
     assert response.status_code == 422
+
+
+def test_create_account_empty_name_422(client, authenticated_user):
+    """Reject account creation when the name is empty."""
+
+    response = client.post(
+        "/api/v1/accounts/",
+        headers=authenticated_user["headers"],
+        json={
+            "name": "",
+            "account_type": "checking",
+            "balance": "250.00",
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["loc"][1] == "name"
+
+
+def test_create_account_negative_balance_422(client, authenticated_user):
+    """Reject account creation when the balance is negative."""
+
+    response = client.post(
+        "/api/v1/accounts/",
+        headers=authenticated_user["headers"],
+        json={
+            "name": "Main Checking",
+            "account_type": "checking",
+            "balance": "-200",
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["loc"][1] == "balance"
