@@ -2,18 +2,20 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.account import AccountType
 
 
 class AccountBase(BaseModel):
-    name: str
+    name: str = Field(min_length=1)
     account_type: AccountType
 
 
 class AccountCreate(AccountBase):
-    balance: Decimal = Decimal("0.00")
+    balance: Decimal = Field(
+        default=Decimal("0.00"), ge=0, max_digits=12, decimal_places=2
+    )
 
 
 class AccountResponse(AccountBase):
