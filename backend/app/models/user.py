@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .account import Account
     from .category import Category
 
+from sqlalchemy import Index, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -29,6 +30,14 @@ class User(BaseModel):
     first_name: Mapped[str | None] = mapped_column(nullable=True)
 
     last_name: Mapped[str | None] = mapped_column(nullable=True)
+
+    __table_args__ = (
+        Index(
+            "ix_users_email_lower",
+            func.lower(email),
+            unique=True,
+        ),
+    )
 
     accounts: Mapped[list["Account"]] = relationship(back_populates="user")
 
