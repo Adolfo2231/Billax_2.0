@@ -1,7 +1,7 @@
-import { UiPreview } from './pages/UiPreview'
+import { AppRouter } from './routes/AppRouter'
 
 function App() {
-  return <UiPreview />
+  return <AppRouter/>
 }
 
 export default App
