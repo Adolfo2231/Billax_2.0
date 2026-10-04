@@ -9,6 +9,7 @@ interface ApiRequestOptions<TBody = unknown> {
     body?: TBody
     bodyFormat?: BodyFormat
     token?: string
+    includeApiPrefix?: boolean
 }
 
 const API_PREFIX = '/api/v1'
@@ -26,7 +27,8 @@ export async function apiRequest<TResponse, TBody = unknown>(
 
     const baseUrl = configuredBaseUrl.replace(/\/+$/, '')
     const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
-    const url = `${baseUrl}${API_PREFIX}${normalizedEndpoint}`
+    const apiPrefix = options.includeApiPrefix === false ? '' : API_PREFIX
+    const url = `${baseUrl}${apiPrefix}${normalizedEndpoint}`
     const bodyFormat =
         options.bodyFormat ?? (options.body !== undefined ? 'json' : undefined)
 
