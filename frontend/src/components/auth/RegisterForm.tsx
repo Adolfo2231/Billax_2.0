@@ -68,6 +68,7 @@ export function RegisterForm({
                 value={formData.email}
                 onChange={handleChange}
                 error={fieldErrors.email}
+                disabled={isSubmitting}
             />
 
             <FormField
@@ -79,6 +80,7 @@ export function RegisterForm({
                 value={formData.password}
                 onChange={handleChange}
                 error={fieldErrors.password}
+                disabled={isSubmitting}
             />
 
             <FormField
@@ -90,6 +92,7 @@ export function RegisterForm({
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 error={fieldErrors.confirmPassword}
+                disabled={isSubmitting}
             />
 
             <FormField
@@ -102,6 +105,7 @@ export function RegisterForm({
                 value={formData.first_name}
                 onChange={handleChange}
                 error={fieldErrors.first_name}
+                disabled={isSubmitting}
             />
 
             <FormField
@@ -114,9 +118,10 @@ export function RegisterForm({
                 value={formData.last_name}
                 onChange={handleChange}
                 error={fieldErrors.last_name}
+                disabled={isSubmitting}
             />
 
-            <Button type="submit" loading={isSubmitting}>
+            <Button className="mt-2 w-full" type="submit" loading={isSubmitting}>
                 Create account
             </Button>
         </form>
