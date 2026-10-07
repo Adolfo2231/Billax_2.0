@@ -31,7 +31,7 @@ export function FormField({ id, label, error, hint, ...inputProps }: FormFieldPr
                 </p>
             ) : null}
             {error ? (
-                <p id={errorId} className="text-caption text-danger">
+                <p id={errorId} className="text-caption text-text-primary">
                     {error}
                 </p>
             ) : null}
