@@ -1,23 +1,15 @@
 import { useState } from "react"
+import type {
+    RegisterFieldErrors,
+    RegisterFormData,
+} from "../../types/auth"
 import { Alert } from "../ui/Alert"
 import { Button } from "../ui/Button"
 import { FormField } from "../ui/FormField"
 
-type RegisterFormData = {
-    email: string
-    password: string
-    confirmPassword: string
-    first_name: string
-    last_name: string
-}
-
-type RegisterFormErrors = Partial<
-    Record<keyof RegisterFormData, string>
->
-
 type RegisterFormProps = {
     onSubmit: (data: RegisterFormData) => void
-    fieldErrors?: RegisterFormErrors
+    fieldErrors?: RegisterFieldErrors
     generalError?: string
     isSubmitting?: boolean
 }
