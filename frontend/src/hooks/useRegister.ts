@@ -50,6 +50,7 @@ function createRegisterPayload(data: RegisterFormData): RegisterData {
 export function useRegister() {
     const [fieldErrors, setFieldErrors] = useState<RegisterFieldErrors>({})
     const [generalError, setGeneralError] = useState<string>()
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     async function register(data: RegisterFormData): Promise<User | undefined> {
         const validationErrors = validateRegisterData(data)
@@ -61,24 +62,35 @@ export function useRegister() {
             return undefined
         }
 
+        setIsSubmitting(true)
+
         try {
             return await authService.register(createRegisterPayload(data))
         } catch (error) {
             const apiFieldErrors: RegisterFieldErrors = {}
 
             if (error instanceof ApiError) {
-                const fields: (keyof RegisterData)[] = [
-                    'email',
-                    'password',
-                    'first_name',
-                    'last_name',
-                ]
+                if (error.status === 409 && typeof error.detail === 'string') {
+                    apiFieldErrors.email = getErrorMessage(error)
+                } else if (
+                    error.status === 422 &&
+                    typeof error.detail === 'string'
+                ) {
+                    apiFieldErrors.password = getErrorMessage(error)
+                } else if (error.status === 422) {
+                    const fields: (keyof RegisterData)[] = [
+                        'email',
+                        'password',
+                        'first_name',
+                        'last_name',
+                    ]
 
-                for (const field of fields) {
-                    const message = getFieldError(error, field)
+                    for (const field of fields) {
+                        const message = getFieldError(error, field)
 
-                    if (message) {
-                        apiFieldErrors[field] = message
+                        if (message) {
+                            apiFieldErrors[field] = message
+                        }
                     }
                 }
             }
@@ -91,6 +103,8 @@ export function useRegister() {
             )
 
             return undefined
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -98,5 +112,6 @@ export function useRegister() {
         register,
         fieldErrors,
         generalError,
+        isSubmitting,
     }
 }
