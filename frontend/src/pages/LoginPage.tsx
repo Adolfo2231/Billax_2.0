@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
+import { AuthCard } from '../components/auth/AuthCard'
+import { AuthLink } from '../components/auth/AuthLink'
 import { Alert } from '../components/ui/Alert'
 
 export function LoginPage() {
@@ -23,14 +25,15 @@ export function LoginPage() {
     }, [navigate, registered])
 
     return (
-        <main>
-            <h1>Login</h1>
+        <AuthCard title="Sign in">
             {showRegistrationSuccess ? (
                 <Alert variant="success">
                     Account created. Sign in to continue.
                 </Alert>
             ) : null}
-            <Link to="/register">Create an account</Link>
-        </main>
+            <AuthLink to="/register">
+                Don't have an account? Create one
+            </AuthLink>
+        </AuthCard>
     )
 }
