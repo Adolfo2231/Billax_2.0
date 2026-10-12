@@ -22,3 +22,12 @@ export type User = {
     created_at: string
     updated_at: string
 }
+
+export type LoginFormData = {
+    email: string
+    password: string
+}
+
+export type LoginFieldErrors = Partial<
+    Record<keyof LoginFormData, string>
+>

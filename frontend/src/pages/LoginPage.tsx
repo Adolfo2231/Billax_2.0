@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { AuthCard } from '../components/auth/AuthCard'
 import { AuthLink } from '../components/auth/AuthLink'
+import { LoginForm } from '../components/auth/LoginForm'
 import { Alert } from '../components/ui/Alert'
 
 export function LoginPage() {
@@ -24,6 +25,8 @@ export function LoginPage() {
         }
     }, [navigate, registered])
 
+    function handleLogin() {}
+
     return (
         <AuthCard title="Sign in">
             {showRegistrationSuccess ? (
@@ -31,6 +34,7 @@ export function LoginPage() {
                     Account created. Sign in to continue.
                 </Alert>
             ) : null}
+            <LoginForm onSubmit={handleLogin} />
             <AuthLink to="/register">
                 Don't have an account? Create one
             </AuthLink>
