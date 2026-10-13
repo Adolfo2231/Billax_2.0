@@ -31,3 +31,8 @@ export type LoginFormData = {
 export type LoginFieldErrors = Partial<
     Record<keyof LoginFormData, string>
 >
+
+export type LoginResponse = {
+    access_token: string
+    token_type: 'bearer'
+}
