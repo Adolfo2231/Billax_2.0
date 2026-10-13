@@ -4,10 +4,13 @@ import { AuthCard } from '../components/auth/AuthCard'
 import { AuthLink } from '../components/auth/AuthLink'
 import { LoginForm } from '../components/auth/LoginForm'
 import { Alert } from '../components/ui/Alert'
+import { useLogin } from '../hooks/useLogin'
+import type { LoginFormData } from '../types/auth'
 
 export function LoginPage() {
     const location = useLocation()
     const navigate = useNavigate()
+    const { login, fieldErrors, generalError, isSubmitting } = useLogin()
     const navigationState: unknown = location.state
     const registered =
         typeof navigationState === 'object' &&
@@ -25,7 +28,9 @@ export function LoginPage() {
         }
     }, [navigate, registered])
 
-    function handleLogin() {}
+    async function handleLogin(data: LoginFormData) {
+        await login(data)
+    }
 
     return (
         <AuthCard title="Sign in">
@@ -34,7 +39,12 @@ export function LoginPage() {
                     Account created. Sign in to continue.
                 </Alert>
             ) : null}
-            <LoginForm onSubmit={handleLogin} />
+            <LoginForm
+                onSubmit={handleLogin}
+                fieldErrors={fieldErrors}
+                generalError={generalError}
+                isSubmitting={isSubmitting}
+            />
             <AuthLink to="/register">
                 Don't have an account? Create one
             </AuthLink>
