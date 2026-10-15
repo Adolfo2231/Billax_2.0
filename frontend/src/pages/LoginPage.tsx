@@ -29,7 +29,11 @@ export function LoginPage() {
     }, [navigate, registered])
 
     async function handleLogin(data: LoginFormData) {
-        await login(data)
+        const response = await login(data)
+
+        if (response !== null) {
+            navigate('/dashboard', { replace: true})
+        }
     }
 
     return (
