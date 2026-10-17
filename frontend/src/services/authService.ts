@@ -19,4 +19,10 @@ export const authService = {
             bodyFormat: 'form',
         })
     },
+
+    getMe(): Promise<User> {
+        return apiRequest<User>('/auth/me', {
+            method: 'GET',
+        })
+    },
 }
