@@ -1,5 +1,6 @@
 import { ApiError } from '../types/api'
 import type { ApiErrorDetail } from '../types/api'
+import { clearToken, getToken } from './tokenStorage'
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE'
 type BodyFormat = 'json' | 'form'
@@ -13,6 +14,16 @@ interface ApiRequestOptions<TBody = unknown> {
 }
 
 const API_PREFIX = '/api/v1'
+const UNAUTHORIZED_EXCLUDED_ENDPOINTS = new Set([
+    '/auth/login',
+    '/auth/register',
+])
+
+let onUnauthorized: (() => void) | null = null
+
+export function setUnauthorizedHandler(handler: () => void): void {
+    onUnauthorized = handler
+}
 
 export async function apiRequest<TResponse, TBody = unknown>(
     endpoint: string,
@@ -33,9 +44,10 @@ export async function apiRequest<TResponse, TBody = unknown>(
         options.bodyFormat ?? (options.body !== undefined ? 'json' : undefined)
 
     const headers = new Headers()
+    const token = options.token ?? getToken()
 
-    if (options.token) {
-        headers.set('Authorization', `Bearer ${options.token}`)
+    if (token) {
+        headers.set('Authorization', `Bearer ${token}`)
     }
 
     if (bodyFormat === 'json') {
@@ -84,6 +96,14 @@ export async function apiRequest<TResponse, TBody = unknown>(
             }
         } catch {
             // Conservamos el mensaje fallback si la respuesta no contiene JSON.
+        }
+
+        if (
+            response.status === 401 &&
+            !UNAUTHORIZED_EXCLUDED_ENDPOINTS.has(normalizedEndpoint)
+        ) {
+            clearToken()
+            onUnauthorized?.()
         }
 
         throw new ApiError(response.status, detail)
