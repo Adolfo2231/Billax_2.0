@@ -1,25 +1,23 @@
 import { useState } from 'react'
-import { authService } from '../services/authService'
 import { getErrorMessage, getFieldError } from '../services/errors'
 import { ApiError } from '../types/api'
-import type {
-    LoginFieldErrors,
-    LoginFormData,
-    LoginResponse,
-} from '../types/auth'
+import type { LoginFieldErrors, LoginFormData } from '../types/auth'
+import { useAuth } from './useAuth'
 
 export function useLogin() {
+    const { login: loginWithSession } = useAuth()
     const [fieldErrors, setFieldErrors] = useState<LoginFieldErrors>({})
     const [generalError, setGeneralError] = useState<string>()
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    async function login(data: LoginFormData): Promise<LoginResponse | null> {
+    async function login(data: LoginFormData): Promise<boolean> {
         setFieldErrors({})
         setGeneralError(undefined)
         setIsSubmitting(true)
 
         try {
-            return await authService.login(data.email, data.password)
+            await loginWithSession(data.email, data.password)
+            return true
         } catch (error) {
             if (error instanceof ApiError && error.status === 401) {
                 setGeneralError('Invalid email or password')
@@ -45,7 +43,7 @@ export function useLogin() {
                 setGeneralError(getErrorMessage(error))
             }
 
-            return null
+            return false
         } finally {
             setIsSubmitting(false)
         }
