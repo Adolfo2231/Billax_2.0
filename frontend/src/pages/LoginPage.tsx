@@ -29,10 +29,10 @@ export function LoginPage() {
     }, [navigate, registered])
 
     async function handleLogin(data: LoginFormData) {
-        const response = await login(data)
+        const loggedIn = await login(data)
 
-        if (response !== null) {
-            navigate('/dashboard', { replace: true})
+        if (loggedIn) {
+            navigate('/dashboard', { replace: true })
         }
     }
 
