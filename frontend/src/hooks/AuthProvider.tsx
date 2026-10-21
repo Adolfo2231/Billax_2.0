@@ -20,6 +20,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const logout = useCallback(() => {
         clearToken()
         setUser(null)
+        setIsLoading(false)
         navigate('/login', { replace: true })
     }, [navigate])
 
