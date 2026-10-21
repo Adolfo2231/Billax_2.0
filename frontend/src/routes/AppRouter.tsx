@@ -1,5 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
+import { DashboardLayout } from '../components/layout/DashboardLayout'
 import { AuthProvider } from '../hooks/AuthProvider'
+import { AccountsPage } from '../pages/AccountsPage'
+import { CreateAccountPage } from '../pages/CreateAccountPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
@@ -18,7 +21,11 @@ export function AppRouter() {
                         <Route path="/register" element={<RegisterPage />} />
                     </Route>
                     <Route element={<ProtectedRoute />}>
-                        <Route path="/dashboard" element={<DashboardPage />} />
+                        <Route element={<DashboardLayout />}>
+                            <Route path="/dashboard" element={<DashboardPage />} />
+                            <Route path="/accounts" element={<AccountsPage />} />
+                            <Route path="/accounts/new" element={<CreateAccountPage />} />
+                        </Route>
                     </Route>
                     <Route path="*" element={<SessionRedirect />} />
                 </Routes>
