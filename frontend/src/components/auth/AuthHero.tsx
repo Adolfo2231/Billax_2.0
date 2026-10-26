@@ -4,9 +4,17 @@ type AuthHeroProps = {
     title: string
     description: string
     children?: ReactNode
+    previewLayout?: 'inline' | 'stacked'
 }
 
-export function AuthHero({ title, description, children }: AuthHeroProps) {
+export function AuthHero({
+    title,
+    description,
+    children,
+    previewLayout = 'inline',
+}: AuthHeroProps) {
+    const isStacked = previewLayout === 'stacked'
+
     return (
         <section className="relative isolate overflow-hidden bg-brand-900 px-6 py-6 text-surface lg:flex lg:min-h-screen lg:items-center lg:px-8">
             <svg
@@ -58,19 +66,28 @@ export function AuthHero({ title, description, children }: AuthHeroProps) {
 
                 <div className="max-w-[450px]">
                     <h1 className="text-display text-balance">{title}</h1>
-                    <div
-                        className={`mt-3 ${
-                            children
-                                ? 'grid grid-cols-[minmax(0,1fr)_125px] items-end gap-4 sm:grid-cols-[minmax(0,1fr)_210px] lg:grid-cols-[minmax(0,1fr)_260px]'
-                                : ''
-                        }`}
-                    >
-                        <p className="text-small text-surface/80 sm:text-body">
+                    {isStacked ? (
+                        <p className="mt-3 text-small text-surface/80 sm:text-body">
                             {description}
                         </p>
-                        {children}
-                    </div>
+                    ) : (
+                        <div
+                            className={`mt-3 ${
+                                children
+                                    ? 'grid grid-cols-[minmax(0,1fr)_125px] items-end gap-4 sm:grid-cols-[minmax(0,1fr)_210px] lg:grid-cols-[minmax(0,1fr)_260px]'
+                                    : ''
+                            }`}
+                        >
+                            <p className="text-small text-surface/80 sm:text-body">
+                                {description}
+                            </p>
+                            {children}
+                        </div>
+                    )}
                 </div>
+                {isStacked && children ? (
+                    <div className="mt-5">{children}</div>
+                ) : null}
             </div>
         </section>
     )
