@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { AccountFieldErrors, AccountCreate, Account } from "../types/Account";
 import { accountService } from '../services/accountService';
 import { ApiError } from "../types/api";
@@ -31,7 +31,12 @@ function createAccountPayload(data: AccountCreate): AccountCreate {
 export function useAccounts() {
     const [fieldErrors, setFieldErrors] = useState<AccountFieldErrors>({})
     const [error, setError] = useState<string>()
+    const [listError, setListError] = useState<string>()
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [accounts, setAccounts] = useState<Account[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [reloadKey, setReloadKey] = useState(0)
+
 
     async function createAccount(
         data: AccountCreate,
@@ -82,11 +87,36 @@ export function useAccounts() {
         }
     }
 
+    useEffect(() => {
+        async function loadAccounts() {
+            try {
+                const fetchedAccounts = await accountService.getAccounts()
+                setAccounts(fetchedAccounts)
+                setListError(undefined)
+            } catch {
+                setListError('Something went wrong')
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        void loadAccounts()
+    }, [reloadKey])
+
+    function refetch() {
+        setIsLoading(true)
+        setReloadKey((currentKey) => currentKey + 1)
+    }
 
     return {
         createAccount,
         fieldErrors,
         error,
+        listError,
         isSubmitting,
+        accounts,
+        isLoading,
+        refetch
+
     }
 }

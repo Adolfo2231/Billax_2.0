@@ -9,4 +9,10 @@ export const accountService = {
             body: data,
         })
     },
+
+    getAccounts(): Promise<Account[]> {
+        return apiRequest<Account[]>('/accounts/', {
+            method: 'GET',
+        })
+    },
 }
