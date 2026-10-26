@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router'
+import { AuthDivider } from '../components/auth/AuthDivider'
 import { AuthHero } from '../components/auth/AuthHero'
 import { RegisterForm } from '../components/auth/RegisterForm'
 import { useRegister } from '../hooks/useRegister'
@@ -91,11 +92,7 @@ export function RegisterPage() {
                         isSubmitting={isSubmitting}
                     />
 
-                    <div className="my-5 flex items-center gap-4 text-caption text-text-secondary">
-                        <span className="h-px flex-1 bg-border" />
-                        <span>Already a member</span>
-                        <span className="h-px flex-1 bg-border" />
-                    </div>
+                    <AuthDivider>Already a member</AuthDivider>
 
                     <Link
                         className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md border border-border bg-surface px-4 py-3 text-small font-medium text-brand-900 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
