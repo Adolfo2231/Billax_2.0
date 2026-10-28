@@ -1,22 +1,13 @@
-import { useAccounts } from "../hooks/useAccounts"
-import { Spinner } from "../components/ui/Spinner"
-import { Alert } from "../components/ui/Alert"
-import { Button } from "../components/ui/Button"
-import { AccountsEmptyState } from '../components/dashboard/AccountsEmptyState'
-import type { AccountType } from '../types/Account'
 import { Link } from 'react-router'
-
-const accountTypeLabels: Record<AccountType, string> = {
-    cash: 'Cash',
-    checking: 'Checking',
-    savings: 'Savings',
-    credit_card: 'Credit card',
-}
-
-const currencyFormatter = new Intl.NumberFormat('es-PR', {
-    style: 'currency',
-    currency: 'USD',
-})
+import { AccountList } from '../components/accounts/AccountList'
+import { AddAccountCard } from '../components/accounts/AddAccountCard'
+import { NetWorthCard } from '../components/accounts/NetWorthCard'
+import { AccountsEmptyState } from '../components/dashboard/AccountsEmptyState'
+import { Alert } from '../components/ui/Alert'
+import { Button } from '../components/ui/Button'
+import { Spinner } from '../components/ui/Spinner'
+import { useAccounts } from '../hooks/useAccounts'
+import { computeTotals } from '../utils/accountTotals'
 
 export function AccountsPage() {
     const { accounts, isLoading, listError, refetch } = useAccounts()
@@ -41,41 +32,35 @@ export function AccountsPage() {
         }
 
         return (
-            <ul className="flex flex-col gap-3">
-                {activeAccounts.map((account) => (
-                    <li
-                        key={account.id}
-                        className="flex items-center justify-between gap-4 rounded-md border border-border bg-surface p-4"
-                    >
-                        <div>
-                            <h2 className="text-h2 text-text-primary">
-                                {account.name}
-                            </h2>
-                            <p className="text-small text-text-secondary">
-                                {accountTypeLabels[account.account_type]}
-                            </p>
-                        </div>
-
-                        <p className="text-body font-medium text-text-primary">
-                            {currencyFormatter.format(Number(account.balance))}
-                        </p>
-                    </li>
-                ))}
-            </ul>
+            <>
+                <NetWorthCard totals={computeTotals(activeAccounts)} />
+                <section className="flex w-full min-w-0 flex-col gap-4">
+                    <h2 className="text-h2 text-text-primary">
+                        Your accounts
+                    </h2>
+                    <AccountList accounts={activeAccounts} />
+                    <AddAccountCard />
+                </section>
+            </>
         )
     }
 
     return (
-        <div className="flex w-full flex-col gap-6">
-            <div className="flex items-center justify-between gap-4">
-                <h1 className="text-h1 text-text-primary">Accounts</h1>
+        <div className="flex w-full min-w-0 flex-col gap-5">
+            <header className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                    <h1 className="text-h1 text-text-primary">My Accounts</h1>
+                    <p className="mt-1 text-small text-text-secondary">
+                        Manage your financial accounts and balances.
+                    </p>
+                </div>
                 <Link
                     to="/accounts/new"
-                    className="inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-3 text-small font-medium text-surface hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+                    className="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-md bg-brand-600 px-4 py-3 text-small font-medium text-surface hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
                 >
-                    New account
+                    <span aria-hidden="true">+</span> New account
                 </Link>
-            </div>
+            </header>
 
             {renderContent()}
         </div>
