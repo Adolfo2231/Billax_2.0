@@ -75,11 +75,11 @@ export function MobileNavigation({ isOpen, onClose }: MobileNavigationProps) {
     }
 
     return (
-        <div className="fixed top-[0] right-[0] bottom-[0] left-[0] z-40 lg:hidden">
+        <div className="fixed inset-0 z-40 lg:hidden">
             <button
                 type="button"
                 aria-label="Close menu"
-                className="absolute top-[0] right-[0] bottom-[0] left-[0] bg-text-primary/40"
+                className="absolute inset-0 bg-text-primary/40"
                 onClick={onClose}
             />
             <div

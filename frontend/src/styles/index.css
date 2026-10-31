@@ -52,8 +52,9 @@
     --text-caption--line-height: 16px;
     --text-caption--font-weight: 500;
 
-    /* Spacing scale. p-1, gap-5, and m-8 use these values. */
+    /* Spacing scale. inset-0, p-1, gap-5, and m-8 use these values. */
     --spacing-*: initial;
+    --spacing-0: 0px;
     --spacing-1: 4px;
     --spacing-2: 8px;
     --spacing-3: 12px;

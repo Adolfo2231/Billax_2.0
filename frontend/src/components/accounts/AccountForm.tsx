@@ -11,6 +11,8 @@ type AccountFormProps = {
     fieldErrors?: AccountFieldErrors
     error?: string
     isSubmitting?: boolean
+    initialValues?: AccountCreate
+    submitLabel?: string
 }
 
 const initialFormData: AccountCreate = {
@@ -25,8 +27,12 @@ export function AccountForm({
     fieldErrors = {},
     error,
     isSubmitting = false,
+    initialValues,
+    submitLabel = 'Add account',
 }: AccountFormProps) {
-    const [formData, setFormData] = useState<AccountCreate>(initialFormData)
+    const [formData, setFormData] = useState<AccountCreate>(
+        initialValues ?? initialFormData,
+    )
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -125,7 +131,7 @@ export function AccountForm({
                 </Button>
 
                 <Button type="submit" loading={isSubmitting}>
-                    Add account
+                    {submitLabel}
                 </Button>
             </div>
         </form>
