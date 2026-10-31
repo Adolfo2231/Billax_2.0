@@ -6,6 +6,8 @@ export type AccountCreate = {
     balance: string
 }
 
+export type AccountUpdate = Partial<AccountCreate>
+
 export type Account = {
     id: string
     user_id: string
