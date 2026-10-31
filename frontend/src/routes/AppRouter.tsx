@@ -4,6 +4,7 @@ import { AuthProvider } from '../hooks/AuthProvider'
 import { AccountsPage } from '../pages/AccountsPage'
 import { CreateAccountPage } from '../pages/CreateAccountPage'
 import { DashboardPage } from '../pages/DashboardPage'
+import { EditAccountPage } from '../pages/EditAccountPage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { ProtectedRoute } from './ProtectedRoute'
@@ -25,6 +26,7 @@ export function AppRouter() {
                             <Route path="/dashboard" element={<DashboardPage />} />
                             <Route path="/accounts" element={<AccountsPage />} />
                             <Route path="/accounts/new" element={<CreateAccountPage />} />
+                            <Route path="/accounts/:id/edit" element={<EditAccountPage />} />
                         </Route>
                     </Route>
                     <Route path="*" element={<SessionRedirect />} />
