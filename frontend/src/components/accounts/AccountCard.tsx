@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import type { Account } from '../../types/Account'
 import { Card } from '../ui/Card'
 import { AccountBalance } from './AccountBalance'
@@ -27,6 +28,13 @@ export function AccountCard({ account }: AccountCardProps) {
                 accountType={account.account_type}
                 balance={account.balance}
             />
+            <Link
+                to={`/accounts/${account.id}/edit`}
+                aria-label={`Edit ${account.name}`}
+                className="inline-flex min-h-[44px] min-w-[44px] items-center self-start text-small font-medium text-brand-600 hover:text-brand-700 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+            >
+                Edit
+            </Link>
         </Card>
     )
 }
