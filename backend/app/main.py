@@ -30,3 +30,10 @@ def root() -> dict:
     """Return a health check message for the running API."""
 
     return {"message": "Billax 2.0 API running"}
+
+
+@app.get("/health")
+def health() -> dict:
+    """Return a liveness response without querying the database."""
+
+    return {"status": "ok"}

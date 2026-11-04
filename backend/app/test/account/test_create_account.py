@@ -1,88 +1,96 @@
-def test_create_account_success(client):
-    credentials = {
-        "email": "account@example.com",
-        "password": "passwordtest",
-    }
+"""API tests for creating and listing user-owned accounts."""
 
-    register_response = client.post(
-        "/api/v1/auth/register",
-        json=credentials,
-    )
-    assert register_response.status_code == 201
 
-    user_id = register_response.json()["id"]
-
-    login_response = client.post(
-        "/api/v1/auth/login",
-        data={
-            "username": credentials["email"],
-            "password": credentials["password"],
-        },
-    )
-    assert login_response.status_code == 200
-
-    token = login_response.json()["access_token"]
+def test_create_account_success(client, authenticated_user, account_payload):
+    """Create an account for an authenticated user."""
 
     response = client.post(
         "/api/v1/accounts/",
-        headers={
-            "Authorization": f"Bearer {token}",
-        },
-        json={
-            "name": "Main Checking",
-            "account_type": "checking",
-            "balance": "250.00",
-        },
+        headers=authenticated_user["headers"],
+        json=account_payload,
     )
 
     assert response.status_code == 201
 
     data = response.json()
 
-    assert data["name"] == "Main Checking"
-    assert data["account_type"] == "checking"
-    assert data["balance"] == "250.00"
-    assert data["user_id"] == user_id
+    assert data["name"] == account_payload["name"]
+    assert data["account_type"] == account_payload["account_type"]
+    assert data["balance"] == account_payload["balance"]
+    assert data["user_id"] == str(authenticated_user["user"].id)
     assert data["is_active"] is True
 
 
-def test_create_account_without_token(client):
+def test_create_account_without_token(client, account_payload):
+    """Reject account creation when authentication is missing."""
+
     response = client.post(
         "/api/v1/accounts/",
-        json={
-            "name": "Main Checking",
-            "account_type": "checking",
-            "balance": "250.00",
-        },
+        json=account_payload,
     )
 
     assert response.status_code == 401
 
 
-def test_create_account_with_invalid_account_type(client):
-    credentials = {
-        "email": "invalid-type@example.com",
-        "password": "passwordtest",
-    }
+def test_list_accounts_without_token(client):
+    """Reject listing accounts when authentication is missing."""
 
-    client.post(
-        "/api/v1/auth/register",
-        json=credentials,
+    response = client.get("/api/v1/accounts/")
+
+    assert response.status_code == 401
+
+
+def test_list_accounts_for_authenticated_user(
+    client,
+    authenticated_user,
+    account_owned,
+):
+    """List only the accounts available to the authenticated user."""
+
+    response = client.get(
+        "/api/v1/accounts/",
+        headers=authenticated_user["headers"],
     )
 
-    login_response = client.post(
-        "/api/v1/auth/login",
-        data={
-            "username": credentials["email"],
-            "password": credentials["password"],
-        },
+    assert response.status_code == 200
+    assert response.json() == [account_owned]
+    assert response.json()[0]["user_id"] == str(authenticated_user["user"].id)
+
+
+def test_list_accounts_empty_for_authenticated_user(client, authenticated_user):
+    """Return an empty list when the authenticated user has no accounts."""
+
+    response = client.get(
+        "/api/v1/accounts/",
+        headers=authenticated_user["headers"],
     )
 
-    token = login_response.json()["access_token"]
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_list_accounts_does_not_include_other_users_accounts(
+    client,
+    account_owned,
+    other_authenticated_user,
+):
+    """Keep another user's accounts out of the authenticated user's list."""
+
+    response = client.get(
+        "/api/v1/accounts/",
+        headers=other_authenticated_user["headers"],
+    )
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_create_account_with_invalid_account_type(client, authenticated_user):
+    """Reject account creation when its account type is unsupported."""
 
     response = client.post(
         "/api/v1/accounts/",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=authenticated_user["headers"],
         json={
             "name": "Bad Account",
             "account_type": "investment",
@@ -91,3 +99,37 @@ def test_create_account_with_invalid_account_type(client):
     )
 
     assert response.status_code == 422
+
+
+def test_create_account_empty_name_422(client, authenticated_user):
+    """Reject account creation when the name is empty."""
+
+    response = client.post(
+        "/api/v1/accounts/",
+        headers=authenticated_user["headers"],
+        json={
+            "name": "",
+            "account_type": "checking",
+            "balance": "250.00",
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["loc"][1] == "name"
+
+
+def test_create_account_negative_balance_422(client, authenticated_user):
+    """Reject account creation when the balance is negative."""
+
+    response = client.post(
+        "/api/v1/accounts/",
+        headers=authenticated_user["headers"],
+        json={
+            "name": "Main Checking",
+            "account_type": "checking",
+            "balance": "-200",
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["loc"][1] == "balance"

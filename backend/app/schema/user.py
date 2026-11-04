@@ -3,14 +3,14 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class UserRegister(BaseModel):
     """Validate incoming user registration data."""
 
     email: EmailStr
-    password: str = Field(min_length=8)
+    password: str = Field(min_length=8, max_length=72)
     first_name: str | None = Field(
         default=None,
         min_length=1,
@@ -22,12 +22,12 @@ class UserRegister(BaseModel):
         max_length=50,
     )
 
+    @field_validator("email")
+    @classmethod
+    def normalize(cls, value: str) -> str:
+        """Normalize the email so it is stored in lowercase."""
 
-class UserLogin(BaseModel):
-    """Validate incoming user login credentials."""
-
-    email: EmailStr
-    password: str = Field(min_length=8)
+        return value.strip().lower()
 
 
 class UserResponse(BaseModel):
@@ -45,7 +45,7 @@ class UserResponse(BaseModel):
 
 
 class LoginResponse(BaseModel):
-    """Serialize user token for API response"""
+    """Serialize the access token returned after login."""
 
     access_token: str
     token_type: str

@@ -5,5 +5,6 @@ from sqlalchemy.orm import sessionmaker
 
 from app.config.settings import settings
 
-engine = create_engine(settings.database_url)
+# Neon suspends idle databases and drops open connections.
+engine = create_engine(settings.database_url, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine)

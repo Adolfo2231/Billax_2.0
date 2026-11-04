@@ -31,7 +31,7 @@ def test_account_create_default_balance():
     assert account.balance == Decimal("0.00")
 
 
-def test_account_create_invalid_type():
+def test_account_create_rejects_invalid_type():
     with pytest.raises(ValidationError):
         AccountCreate(
             name="Test",
@@ -45,7 +45,16 @@ def test_account_update_partial():
     assert account.name == "Emergency Fund"
     assert account.account_type is None
     assert account.balance is None
-    assert account.is_active is None
+
+
+def test_account_update_rejects_blank_name():
+    with pytest.raises(ValidationError):
+        AccountUpdate(name=" ")
+
+
+def test_account_update_rejects_negative_balance():
+    with pytest.raises(ValidationError):
+        AccountUpdate(balance=Decimal("-5.00"))
 
 
 def test_account_response_from_attributes():

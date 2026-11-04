@@ -1,4 +1,8 @@
-"""Authentication API endpoints for user registration and login."""
+"""Authentication API endpoints for user registration and login.
+
+Services return ORM entities. These handlers map them to response schemas
+so the annotated return type matches the public JSON contract.
+"""
 
 from typing import Annotated
 
@@ -7,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.v1.dependencies import get_current_user, get_user_service
 from app.models import User
-from app.schema import LoginResponse, UserLogin, UserRegister, UserResponse
+from app.schema import LoginResponse, UserRegister, UserResponse
 from app.service.user import UserService
 
 router = APIRouter(
@@ -25,8 +29,10 @@ def register(
     user_data: UserRegister,
     service: Annotated[UserService, Depends(get_user_service)],
 ) -> UserResponse:
-    """Register a new user and return the created user data."""
-    return service.register(user_data)
+    """Register a new user and return the public user payload."""
+
+    user = service.register(user_data)
+    return UserResponse.model_validate(user)
 
 
 @router.post(
@@ -40,15 +46,17 @@ def login(
 ) -> LoginResponse:
     """Login a user using OAuth2 form credentials."""
 
-    user_data = UserLogin(
-        email=form_data.username,
-        password=form_data.password,
-    )
-
-    return service.login(user_data)
+    return service.login(form_data.username, form_data.password)
 
 
-@router.get("/me", response_model=UserResponse)
-def get_me(current_user: Annotated[User, Depends(get_current_user)]) -> UserResponse:
-    """Get the current user's profile."""
-    return current_user
+@router.get(
+    "/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_me(
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> UserResponse:
+    """Return the current user's public profile."""
+
+    return UserResponse.model_validate(current_user)

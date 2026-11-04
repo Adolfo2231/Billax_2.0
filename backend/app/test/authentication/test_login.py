@@ -154,8 +154,24 @@ def test_login_with_nonexistent_email(client):
     assert response.status_code == 401
 
 
-def test_me_success(client):
-    """Verify that an authenticated user can access the protected /me route."""
+def test_login_with_invalid_email_format(client):
+    """Reject non-email usernames as invalid credentials, not as a server error."""
+
+    response = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": "not-an-email",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_login_with_short_password(client):
+    """Reject a short password as invalid credentials, not as a server error."""
+
     client.post(
         "/api/v1/auth/register",
         json={
@@ -164,28 +180,28 @@ def test_me_success(client):
         },
     )
 
-    login_response = client.post(
+    response = client.post(
         "/api/v1/auth/login",
         data={
             "username": "test@example.com",
-            "password": "passwordtest",
+            "password": "short",
         },
     )
 
-    token = login_response.json()["access_token"]
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_me_success(client, authenticated_user):
+    """Verify that an authenticated user can access the protected /me route."""
 
     response = client.get(
         "/api/v1/auth/me",
-        headers={
-            "Authorization": f"Bearer {token}",
-        },
+        headers=authenticated_user["headers"],
     )
 
     assert response.status_code == 200
-
-    data = response.json()
-
-    assert data["email"] == "test@example.com"
+    assert response.json()["email"] == authenticated_user["user"].email
 
 
 def test_me_without_token(client):
@@ -321,3 +337,83 @@ def test_me_with_user_deactivated_after_login(client, db_session):
 
     assert response.status_code == 401
     assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_normalized_email(client):
+    """Verify that registration stores the email in lowercase."""
+
+    response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "AUTHENTICATED@EXAMPLE.COM",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["email"] == "authenticated@example.com"
+
+    login_response = client.post(
+        "/api/v1/auth/login",
+        data={"username": "authenticated@example.com", "password": "passwordtest"},
+    )
+
+    assert login_response.status_code == 200
+
+
+def test_login_with_uppercase_email(client):
+    """Verify that login accepts an email written in another case."""
+
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "passwordtest",
+        },
+    )
+
+    assert register_response.status_code == 201
+
+    response = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": "TEST@EXAMPLE.COM",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
+
+
+def test_login_with_email_whitespace(client):
+    """Verify that login strips whitespace around the email."""
+
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "passwordtest",
+        },
+    )
+
+    assert register_response.status_code == 201
+
+    response = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": " TEST@EXAMPLE.COM ",
+            "password": "passwordtest",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"

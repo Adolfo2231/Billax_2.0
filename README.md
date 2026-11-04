@@ -1,62 +1,266 @@
-# Billax 2.0
+# Billax
 
 [![Backend CI](https://github.com/Adolfo2231/Billax_2.0/actions/workflows/backend-ci.yml/badge.svg?branch=dev)](https://github.com/Adolfo2231/Billax_2.0/actions/workflows/backend-ci.yml)
 
-Billax 2.0 is a personal finance application designed to help users organize accounts, categories and financial transactions through a secure API and web interface.
+Billax is a personal finance application designed to help users manage their financial accounts, categories and transactions through a secure backend API and web application.
 
-The project is being developed as a monorepo with a FastAPI backend and a React frontend.
+The project is being developed as a monorepo with a **FastAPI backend**, **PostgreSQL database**, and **React + TypeScript frontend**.
 
-## Tech stack
+The current V0 milestone is authentication, account management, and a production deployment of both the API and the web app.
 
-**Backend:** Python 3.12, FastAPI, SQLAlchemy, PostgreSQL, Alembic, Pydantic and JWT/OAuth2.
+---
 
-**Frontend:** React, TypeScript and Vite.
+## Live Application
 
-**Development:** Docker, Docker Compose, pytest, Ruff and GitHub Actions.
+### Frontend
 
-## Implemented features
+- App: [https://billax-frontend.onrender.com](https://billax-frontend.onrender.com)
+- Login: [https://billax-frontend.onrender.com/login](https://billax-frontend.onrender.com/login)
 
-* User registration with password hashing.
-* OAuth2 login with JWT access tokens.
-* Protected endpoint for retrieving the authenticated user.
-* Validation for inactive users.
-* Relational models for users, accounts, categories and transactions.
-* Pydantic schemas for authentication, users and accounts.
-* PostgreSQL migrations managed with Alembic.
-* Dockerized backend and PostgreSQL services.
-* Automated formatting, linting, migration and test checks.
-* Authenticated account creation with ownership assigned from the current user.
-* 32 passing backend tests.
+### Backend
 
-## Project structure
+- API: [https://billax-2-0.onrender.com](https://billax-2-0.onrender.com)
+- Health: [https://billax-2-0.onrender.com/health](https://billax-2-0.onrender.com/health)
+- Docs: [https://billax-2-0.onrender.com/docs](https://billax-2-0.onrender.com/docs)
+
+---
+
+## Project Status
+
+**Current milestone: V0 deployed. Backend and frontend are running on Render.**
+
+### Completed
+
+- User registration with password hashing
+- OAuth2 password authentication
+- JWT access tokens
+- Authenticated user endpoint
+- Inactive-user validation
+- Account CRUD operations
+- Account ownership enforcement
+- Account deactivation without deleting financial history
+- Category and Transaction SQLAlchemy models
+- PostgreSQL database
+- Alembic migrations
+- Docker development environment
+- Production Docker configuration
+- Production PostgreSQL configuration
+- FastAPI backend deployed to Render
+- Production verification
+- Frontend authentication UI
+- Frontend API integration
+- Dashboard
+- Frontend account management (create, edit, deactivate)
+- Responsive mobile and desktop layout
+- Frontend deployed to Render
+- Automated formatting and linting
+- Automated migration checks
+- Automated backend tests
+- GitHub Actions CI
+- **67 passing backend tests**
+
+### In progress
+
+- Category schemas
+- Category CRUD
+- Transaction schemas and CRUD
+
+---
+
+## Tech Stack
+
+### Backend
+
+- Python 3.12
+- FastAPI
+- SQLAlchemy
+- PostgreSQL
+- Alembic
+- Pydantic
+- JWT / OAuth2
+- pytest
+- Ruff
+
+### Frontend
+
+- React 19
+- TypeScript
+- Vite 8
+- React Router v7
+- Tailwind CSS v4
+
+See [`frontend/README.md`](frontend/README.md) for the frontend architecture and setup.
+
+### Infrastructure & Development
+
+- Docker
+- Docker Compose
+- GitHub Actions
+- Render
+- PostgreSQL hosting
+
+---
+
+## Architecture
+
+Billax follows a layered backend architecture designed to separate HTTP handling, business logic and database access.
 
 ```text
-billax-2.0/
-├── backend/                 # FastAPI API and backend business logic
-│   ├── alembic/             # Database migrations
-│   ├── app/                 # Application source code and tests
-│   ├── Dockerfile
-│   ├── README.md            # Detailed backend documentation
-│   └── requirements.txt
-├── frontend/                # React and TypeScript application
-├── docs/                    # Project documentation
-├── .github/workflows/       # Continuous integration workflows
-├── docker-compose.yml
+Client
+  │
+  ▼
+API / Endpoints
+  │
+  ▼
+Services
+  │
+  ▼
+Repositories
+  │
+  ▼
+SQLAlchemy Models
+  │
+  ▼
+PostgreSQL
+```
+
+The frontend architecture (Page → hook → service → `apiClient`) is documented in [`frontend/README.md`](frontend/README.md).
+
+### Backend structure
+
+```text
+backend/
+├── alembic/                 # Database migrations
+├── app/
+│   ├── api/                 # API routes and dependencies
+│   ├── service/             # Business logic
+│   ├── repositories/        # Database access
+│   ├── models/              # SQLAlchemy models
+│   ├── schema/              # Pydantic schemas
+│   ├── core/                # Security, JWT and application concerns
+│   ├── config/              # Application settings
+│   ├── database/            # Database engine and sessions
+│   ├── test/                # Backend tests
+│   └── main.py              # FastAPI application
+├── Dockerfile
+├── requirements.txt
 └── README.md
 ```
 
-The backend follows a layered request flow:
+---
+
+## Repository Structure
 
 ```text
-HTTP request → API → Service → Repository → PostgreSQL
+Billax_2.0/
+├── backend/                 # FastAPI backend
+├── frontend/                # React + TypeScript frontend
+├── .github/
+│   └── workflows/           # GitHub Actions CI
+├── docker-compose.yml       # Local development environment
+└── README.md
 ```
 
-## Run with Docker
+---
 
-Requirements:
+## Authentication
 
-* Docker Desktop
-* Docker Compose
+The backend uses OAuth2-compatible authentication with JWT access tokens.
+
+Current authentication flow:
+
+```text
+Register
+   │
+   ▼
+Password hashing
+   │
+   ▼
+Login
+   │
+   ▼
+JWT access token
+   │
+   ▼
+Authenticated endpoints
+```
+
+Protected operations use the authenticated user's identity to enforce ownership.
+
+---
+
+## Accounts
+
+Account management is currently the most complete financial domain in the backend.
+
+The web app supports the full account flow: list, create, edit, and deactivate.
+
+Implemented operations include:
+
+- Create account
+- List authenticated user's accounts
+- Retrieve account details
+- Update account
+- Deactivate account
+- Ownership validation
+
+Accounts are associated with the authenticated user, preventing users from operating on another user's financial data.
+
+Deactivation uses a soft-delete approach so financial history is preserved.
+
+---
+
+## Database
+
+Billax uses PostgreSQL with SQLAlchemy for ORM-based database access and Alembic for schema migrations.
+
+Current financial models include:
+
+```text
+User
+ │
+ ├── Account
+ │
+ ├── Category
+ │
+ └── Transaction
+```
+
+Database schema changes are managed through Alembic migrations.
+
+---
+
+## API Documentation
+
+FastAPI provides interactive API documentation.
+
+Local:
+
+```text
+Swagger UI
+http://127.0.0.1:8000/docs
+
+OpenAPI
+http://127.0.0.1:8000/openapi.json
+```
+
+Production:
+
+- Swagger UI: [https://billax-2-0.onrender.com/docs](https://billax-2-0.onrender.com/docs)
+- OpenAPI: [https://billax-2-0.onrender.com/openapi.json](https://billax-2-0.onrender.com/openapi.json)
+
+---
+
+## Running Locally
+
+### Requirements
+
+- Python 3.12
+- Docker Desktop
+- Docker Compose
+- PostgreSQL
+
+### Using Docker
 
 From the project root:
 
@@ -64,19 +268,17 @@ From the project root:
 docker compose up --build -d
 ```
 
-The command starts PostgreSQL, applies the Alembic migrations and launches the FastAPI backend.
-
-Verify the services:
+Check running services:
 
 ```bash
 docker compose ps
-curl http://127.0.0.1:8000/
 ```
 
-API documentation:
+Verify the API:
 
-* Swagger UI: http://127.0.0.1:8000/docs
-* OpenAPI schema: http://127.0.0.1:8000/openapi.json
+```bash
+curl http://127.0.0.1:8000/
+```
 
 Stop the environment:
 
@@ -84,54 +286,167 @@ Stop the environment:
 docker compose down
 ```
 
-> `docker compose down -v` also deletes the local PostgreSQL data volume.
+To also remove the local PostgreSQL volume:
 
-## Local backend setup
+```bash
+docker compose down -v
+```
 
-From the project root:
+> Removing the volume deletes the local database data.
+
+---
+
+## Local Backend Development
 
 ```bash
 cd backend
+
 python3.12 -m venv venv
 source venv/bin/activate
+
 python -m pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Update `.env` with valid local PostgreSQL credentials. Then apply the migrations and start the API:
+Configure the required environment variables in `.env`.
+
+Apply database migrations:
 
 ```bash
 python -m alembic upgrade head
+```
+
+Start the development server:
+
+```bash
 python -m uvicorn app.main:app --reload
 ```
 
-For complete environment configuration and backend commands, see [`backend/README.md`](backend/README.md).
+---
 
-## Tests and continuous integration
+## Testing
 
-Run the backend quality checks from `backend/`:
+Run backend tests from `backend/`:
+
+```bash
+python -m pytest -q
+```
+
+Current test status:
+
+```text
+67 passed
+```
+
+Additional quality checks:
 
 ```bash
 python -m ruff format --check .
 python -m ruff check .
-python -m pytest -q
 ```
 
-The current test suite contains 32 passing tests.
+---
 
-GitHub Actions runs the same backend checks on:
+## Continuous Integration
 
-* Pull requests targeting `dev` or `main`.
-* Pushes to `dev` or `main`.
+GitHub Actions automatically validates the backend.
 
-The workflow also starts PostgreSQL, applies the migrations and verifies that the SQLAlchemy models are synchronized with Alembic.
+The CI pipeline currently performs:
 
-## Current MVP status
+1. Install dependencies
+2. Check formatting
+3. Run Ruff linting
+4. Start PostgreSQL
+5. Run Alembic migrations
+6. Verify migration consistency
+7. Run the complete pytest suite
 
-Billax 2.0 is under active development.
+Current CI result:
 
-The backend foundation is in place: authentication, relational data models, database migrations, Docker support and continuous integration are implemented.
+```text
+67 passed
+```
 
-Authenticated account creation is implemented. Development is continuing with the remaining account CRUD operations and ownership rules, followed by categories and transactions.
+---
 
-The frontend is currently in its initial development stage.
+## Production Deployment
+
+Backend and frontend are deployed to **Render**.
+
+Frontend:
+
+- App: [https://billax-frontend.onrender.com](https://billax-frontend.onrender.com)
+- Login: [https://billax-frontend.onrender.com/login](https://billax-frontend.onrender.com/login)
+
+Backend:
+
+- API: [https://billax-2-0.onrender.com](https://billax-2-0.onrender.com)
+- Health: [https://billax-2-0.onrender.com/health](https://billax-2-0.onrender.com/health)
+- Docs: [https://billax-2-0.onrender.com/docs](https://billax-2-0.onrender.com/docs)
+
+The production environment includes:
+
+- Production Docker configuration
+- Environment-based configuration
+- Production PostgreSQL
+- Alembic migrations
+- FastAPI application server
+- Health endpoint
+- Production verification
+- React frontend served from Render
+
+The backend uses the runtime port provided by the hosting platform. The frontend build bakes in `VITE_API_URL` so the `apiClient` talks to the production API.
+
+---
+
+## Current Development Roadmap
+
+```text
+✅ Authentication
+      │
+      ▼
+✅ Accounts CRUD
+      │
+      ▼
+✅ Ownership & Tests
+      │
+      ▼
+✅ Category Model
+      │
+      ▼
+✅ Transaction Model
+      │
+      ▼
+✅ Backend Deployment
+      │
+      ▼
+✅ Production Verification
+      │
+      ▼
+✅ Frontend Authentication
+      │
+      ▼
+✅ Frontend API Integration
+      │
+      ▼
+✅ Financial Dashboard
+
+Next:
+- Category CRUD
+- Transaction CRUD
+```
+
+---
+
+## Project Goals
+
+Billax helps people take control of their personal finances: see all their accounts in one place, understand their real net worth, and soon track where their money goes through categories and transactions.
+
+Under the hood, it is built with production-oriented engineering practices:
+
+- Clean layered architecture (API → services → repositories)
+- Secure authentication and per-user data ownership
+- PostgreSQL with migrations
+- Automated tests and CI
+- Dockerized development and production deployment
+- A responsive React frontend integrated with the API

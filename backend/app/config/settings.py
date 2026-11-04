@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     environment: str
     debug: bool
     database_url: str
-    test_database_url: str
+    test_database_url: str | None = None
     frontend_url: str
     access_token_expire_minutes: int
     secret_key: str

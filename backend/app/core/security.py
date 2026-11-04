@@ -2,13 +2,19 @@
 
 import bcrypt
 
+from app.core.exception import LongPasswordError
+
 
 def hash_password(password: str) -> str:
     """Hash a plain-text password using bcrypt."""
+
     password_bytes = password.encode("utf-8")
     salt = bcrypt.gensalt()
 
-    password_hash = bcrypt.hashpw(password_bytes, salt)
+    try:
+        password_hash = bcrypt.hashpw(password_bytes, salt)
+    except ValueError:
+        raise LongPasswordError()
 
     return password_hash.decode("utf-8")
 

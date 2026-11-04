@@ -2,18 +2,20 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.models.account import AccountType
 
 
 class AccountBase(BaseModel):
-    name: str
+    name: str = Field(min_length=1)
     account_type: AccountType
 
 
 class AccountCreate(AccountBase):
-    balance: Decimal = Decimal("0.00")
+    balance: Decimal = Field(
+        default=Decimal("0.00"), ge=0, max_digits=12, decimal_places=2
+    )
 
 
 class AccountResponse(AccountBase):
@@ -28,7 +30,20 @@ class AccountResponse(AccountBase):
 
 
 class AccountUpdate(BaseModel):
-    name: str | None = None
+    name: str | None = Field(
+        default=None,
+        min_length=1,
+    )
     account_type: AccountType | None = None
-    balance: Decimal | None = None
-    is_active: bool | None = None
+    balance: Decimal | None = Field(default=None, ge=0, max_digits=12, decimal_places=2)
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    @field_validator("name", "account_type", "balance")
+    @classmethod
+    def reject_explicit_null(cls, value: object) -> object:
+        """Reject JSON null. An omitted field keeps its default and skips this."""
+
+        if value is None:
+            raise ValueError("null is not allowed")
+        return value
