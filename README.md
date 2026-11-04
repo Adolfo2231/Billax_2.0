@@ -453,7 +453,7 @@ Next:
 
 ## Project Goals
 
-Billax helps people take control of their personal finances: see all their accounts in one place, understand their real net worth, and track where their money goes through categories and transactions.
+Billax helps people take control of their personal finances: see all their accounts in one place, understand their real net worth, and soon track where their money goes through categories and transactions.
 
 Under the hood, it is built with production-oriented engineering practices:
 
