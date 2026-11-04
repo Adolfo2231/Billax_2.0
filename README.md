@@ -1,18 +1,37 @@
-# Billax 2.0
+# Billax
 
 [![Backend CI](https://github.com/Adolfo2231/Billax_2.0/actions/workflows/backend-ci.yml/badge.svg?branch=dev)](https://github.com/Adolfo2231/Billax_2.0/actions/workflows/backend-ci.yml)
 
-Billax 2.0 is a personal finance application designed to help users manage their financial accounts, categories and transactions through a secure backend API and web application.
+Billax is a personal finance application designed to help users manage their financial accounts, categories and transactions through a secure backend API and web application.
 
 The project is being developed as a monorepo with a **FastAPI backend**, **PostgreSQL database**, and **React + TypeScript frontend**.
 
-The current development milestone focuses on building a production-ready backend foundation before expanding the frontend.
+The current V0 milestone is authentication, account management, and a production deployment of both the API and the web app.
+
+---
+
+## Live Application
+
+### Frontend
+
+```text
+https://billax-frontend.onrender.com
+https://billax-frontend.onrender.com/login
+```
+
+### Backend
+
+```text
+https://billax-2-0.onrender.com
+https://billax-2-0.onrender.com/health
+https://billax-2-0.onrender.com/docs
+```
 
 ---
 
 ## Project Status
 
-**Current milestone: Backend v0 deployed and production-verified.**
+**Current milestone: V0 deployed. Backend and frontend are running on Render.**
 
 ### Completed
 
@@ -32,6 +51,12 @@ The current development milestone focuses on building a production-ready backend
 - Production PostgreSQL configuration
 - FastAPI backend deployed to Render
 - Production verification
+- Frontend authentication UI
+- Frontend API integration
+- Dashboard
+- Frontend account management (create, edit, deactivate)
+- Responsive mobile and desktop layout
+- Frontend deployed to Render
 - Automated formatting and linting
 - Automated migration checks
 - Automated backend tests
@@ -43,9 +68,6 @@ The current development milestone focuses on building a production-ready backend
 - Category schemas
 - Category CRUD
 - Transaction schemas and CRUD
-- Frontend authentication UI
-- Frontend API integration
-- Dashboard
 
 ---
 
@@ -65,9 +87,13 @@ The current development milestone focuses on building a production-ready backend
 
 ### Frontend
 
-- React
+- React 19
 - TypeScript
-- Vite
+- Vite 8
+- React Router v7
+- Tailwind CSS v4
+
+See [`frontend/README.md`](frontend/README.md) for the frontend architecture and setup.
 
 ### Infrastructure & Development
 
@@ -101,6 +127,8 @@ SQLAlchemy Models
   ▼
 PostgreSQL
 ```
+
+The frontend architecture (Page → hook → service → `apiClient`) is documented in [`frontend/README.md`](frontend/README.md).
 
 ### Backend structure
 
@@ -169,6 +197,8 @@ Protected operations use the authenticated user's identity to enforce ownership.
 
 Account management is currently the most complete financial domain in the backend.
 
+The web app supports the full account flow: list, create, edit, and deactivate.
+
 Implemented operations include:
 
 - Create account
@@ -206,7 +236,9 @@ Database schema changes are managed through Alembic migrations.
 
 ## API Documentation
 
-When running the backend locally, FastAPI provides interactive API documentation:
+FastAPI provides interactive API documentation.
+
+Local:
 
 ```text
 Swagger UI
@@ -214,6 +246,16 @@ http://127.0.0.1:8000/docs
 
 OpenAPI
 http://127.0.0.1:8000/openapi.json
+```
+
+Production:
+
+```text
+Swagger UI
+https://billax-2-0.onrender.com/docs
+
+OpenAPI
+https://billax-2-0.onrender.com/openapi.json
 ```
 
 ---
@@ -338,7 +380,22 @@ Current CI result:
 
 ## Production Deployment
 
-The FastAPI backend has been deployed to **Render**.
+Backend and frontend are deployed to **Render**.
+
+Frontend:
+
+```text
+https://billax-frontend.onrender.com
+https://billax-frontend.onrender.com/login
+```
+
+Backend:
+
+```text
+https://billax-2-0.onrender.com
+https://billax-2-0.onrender.com/health
+https://billax-2-0.onrender.com/docs
+```
 
 The production environment includes:
 
@@ -349,68 +406,60 @@ The production environment includes:
 - FastAPI application server
 - Health endpoint
 - Production verification
+- React frontend served from Render
 
-The deployment configuration is designed to use the runtime port provided by the hosting platform.
+The backend uses the runtime port provided by the hosting platform. The frontend build bakes in `VITE_API_URL` so the `apiClient` talks to the production API.
 
 ---
 
 ## Current Development Roadmap
 
 ```text
-Authentication
+✅ Authentication
       │
       ▼
-Accounts CRUD
+✅ Accounts CRUD
       │
       ▼
-Ownership & Tests
+✅ Ownership & Tests
       │
       ▼
-Category Model
+✅ Category Model
       │
       ▼
-Transaction Model
+✅ Transaction Model
       │
       ▼
-Backend Deployment
+✅ Backend Deployment
       │
       ▼
-Production Verification
-      │
-      ├──────────────► Category Schemas
+✅ Production Verification
       │
       ▼
-Category CRUD
+✅ Frontend Authentication
       │
       ▼
-Transaction CRUD
+✅ Frontend API Integration
       │
       ▼
-Frontend Authentication
-      │
-      ▼
-Frontend API Integration
-      │
-      ▼
-Financial Dashboard
+✅ Financial Dashboard
+
+Next:
+- Category CRUD
+- Transaction CRUD
 ```
 
 ---
 
 ## Project Goals
 
-Billax 2.0 is being built as a practical backend-focused portfolio project demonstrating:
+Billax helps people take control of their personal finances: see all their accounts in one place, understand their real net worth, and track where their money goes through categories and transactions.
 
-- Clean backend architecture
-- REST API development
-- Authentication and authorization
-- Database design
-- ORM usage
-- Database migrations
-- Automated testing
-- CI/CD practices
-- Dockerized development
-- Production deployment
-- Frontend/backend integration
+Under the hood, it is built with production-oriented engineering practices:
 
-The goal is to build the application incrementally while maintaining production-oriented engineering practices throughout development.
+- Clean layered architecture (API → services → repositories)
+- Secure authentication and per-user data ownership
+- PostgreSQL with migrations
+- Automated tests and CI
+- Dockerized development and production deployment
+- A responsive React frontend integrated with the API
