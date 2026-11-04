@@ -14,18 +14,14 @@ The current V0 milestone is authentication, account management, and a production
 
 ### Frontend
 
-```text
-https://billax-frontend.onrender.com
-https://billax-frontend.onrender.com/login
-```
+- App: [https://billax-frontend.onrender.com](https://billax-frontend.onrender.com)
+- Login: [https://billax-frontend.onrender.com/login](https://billax-frontend.onrender.com/login)
 
 ### Backend
 
-```text
-https://billax-2-0.onrender.com
-https://billax-2-0.onrender.com/health
-https://billax-2-0.onrender.com/docs
-```
+- API: [https://billax-2-0.onrender.com](https://billax-2-0.onrender.com)
+- Health: [https://billax-2-0.onrender.com/health](https://billax-2-0.onrender.com/health)
+- Docs: [https://billax-2-0.onrender.com/docs](https://billax-2-0.onrender.com/docs)
 
 ---
 
@@ -250,13 +246,8 @@ http://127.0.0.1:8000/openapi.json
 
 Production:
 
-```text
-Swagger UI
-https://billax-2-0.onrender.com/docs
-
-OpenAPI
-https://billax-2-0.onrender.com/openapi.json
-```
+- Swagger UI: [https://billax-2-0.onrender.com/docs](https://billax-2-0.onrender.com/docs)
+- OpenAPI: [https://billax-2-0.onrender.com/openapi.json](https://billax-2-0.onrender.com/openapi.json)
 
 ---
 
@@ -384,18 +375,14 @@ Backend and frontend are deployed to **Render**.
 
 Frontend:
 
-```text
-https://billax-frontend.onrender.com
-https://billax-frontend.onrender.com/login
-```
+- App: [https://billax-frontend.onrender.com](https://billax-frontend.onrender.com)
+- Login: [https://billax-frontend.onrender.com/login](https://billax-frontend.onrender.com/login)
 
 Backend:
 
-```text
-https://billax-2-0.onrender.com
-https://billax-2-0.onrender.com/health
-https://billax-2-0.onrender.com/docs
-```
+- API: [https://billax-2-0.onrender.com](https://billax-2-0.onrender.com)
+- Health: [https://billax-2-0.onrender.com/health](https://billax-2-0.onrender.com/health)
+- Docs: [https://billax-2-0.onrender.com/docs](https://billax-2-0.onrender.com/docs)
 
 The production environment includes:
 
