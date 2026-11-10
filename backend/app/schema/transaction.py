@@ -1,0 +1,47 @@
+from datetime import datetime
+from decimal import Decimal
+from uuid import UUID
+
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator
+
+from app.models.transaction import TransactionType
+
+
+class TransactionBase(BaseModel):
+    """Shared transaction fields for create and response schemas."""
+
+    account_id: UUID
+    transaction_type: TransactionType
+    amount: Decimal
+    transaction_date: datetime
+    category_id: UUID | None = None
+    description: str | None = Field(default=None, max_length=255)
+
+
+class TransactionCreate(TransactionBase):
+    """Payload to create a transaction. Client-owned fields only."""
+
+    amount: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
+    transaction_date: AwareDatetime
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    @field_validator("description")
+    @classmethod
+    def empty_description_to_none(cls, value: str | None) -> str | None:
+        """Store blank descriptions as None after whitespace strip."""
+
+        if value == "":
+            return None
+        return value
+
+
+class TransactionResponse(TransactionBase):
+    """Public transaction representation returned by the API."""
+
+    id: UUID
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
