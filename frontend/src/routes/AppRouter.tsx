@@ -5,6 +5,7 @@ import { AccountsPage } from '../pages/AccountsPage'
 import { CreateAccountPage } from '../pages/CreateAccountPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { EditAccountPage } from '../pages/EditAccountPage'
+import { EnvelopesPage } from '../pages/EnvelopesPage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { ProtectedRoute } from './ProtectedRoute'
@@ -22,6 +23,10 @@ export function AppRouter() {
                         <Route path="/register" element={<RegisterPage />} />
                     </Route>
                     <Route element={<ProtectedRoute />}>
+                        <Route
+                            path="/accounts/:id/envelopes"
+                            element={<EnvelopesPage />}
+                        />
                         <Route element={<DashboardLayout />}>
                             <Route path="/dashboard" element={<DashboardPage />} />
                             <Route path="/accounts" element={<AccountsPage />} />
