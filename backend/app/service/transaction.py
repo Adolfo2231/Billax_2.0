@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from app.core.exception import AccountNotFoundError
+from app.core.exception import AccountNotFoundError, TransactionNotFoundError
 from app.models import Transaction
 from app.repositories import AccountRepository, TransactionRepository
 from app.schema import TransactionCreate
@@ -44,3 +44,16 @@ class TransactionService:
         """Return all transactions for accounts owned by the specified user."""
 
         return self.transaction_repository.get_all_by_user_id(user_id)
+
+    def get_transaction(self, user_id: UUID, transaction_id: UUID) -> Transaction:
+        """Return an owned transaction or raise when it cannot be found."""
+
+        transaction = self.transaction_repository.get_transaction_by_id(
+            user_id,
+            transaction_id,
+        )
+
+        if transaction is None:
+            raise TransactionNotFoundError()
+
+        return transaction

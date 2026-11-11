@@ -5,6 +5,7 @@ so the annotated return type matches the public JSON contract.
 """
 
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
@@ -50,3 +51,22 @@ def list_transactions(
     return [
         TransactionResponse.model_validate(transaction) for transaction in transactions
     ]
+
+
+@router.get(
+    "/{transaction_id}",
+    response_model=TransactionResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_transaction(
+    current_user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[TransactionService, Depends(get_transaction_service)],
+    transaction_id: UUID,
+) -> TransactionResponse:
+    """Return a transaction owned by the authenticated user."""
+
+    transaction = service.get_transaction(
+        current_user.id,
+        transaction_id,
+    )
+    return TransactionResponse.model_validate(transaction)
