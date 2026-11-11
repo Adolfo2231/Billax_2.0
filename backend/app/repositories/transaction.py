@@ -33,3 +33,22 @@ class TransactionRepository(BaseRepository[Transaction]):
         result = self.db.execute(statement)
 
         return result.scalars().all()
+
+    def get_transaction_by_id(
+        self,
+        user_id: UUID,
+        transaction_id: UUID,
+    ) -> Transaction | None:
+        """Return a user's transaction by ID, or ``None`` when it does not exist."""
+
+        statement = (
+            select(Transaction)
+            .join(Account, Transaction.account_id == Account.id)
+            .where(
+                Account.user_id == user_id,
+                Transaction.id == transaction_id,
+            )
+        )
+        result = self.db.execute(statement)
+
+        return result.scalar_one_or_none()
