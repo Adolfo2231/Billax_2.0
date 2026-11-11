@@ -4,6 +4,9 @@
 !.env.example
 .ruff_cache/
 
+# Local secrets / credentials notes (keep in Notion, not git)
+demo-credentials.txt
+
 # OS
 .DS_Store
 Thumbs.db
