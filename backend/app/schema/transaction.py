@@ -29,6 +29,18 @@ class TransactionCreate(TransactionBase):
 
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
+    @field_validator("category_id")
+    @classmethod
+    def reject_category_id_until_categories_exist(
+        cls,
+        value: UUID | None,
+    ) -> UUID | None:
+        """Reject category_id until Categories CRUD is available."""
+
+        if value is not None:
+            raise ValueError("category_id is not supported yet; omit it or send null")
+        return value
+
     @field_validator("description")
     @classmethod
     def empty_description_to_none(cls, value: str | None) -> str | None:
