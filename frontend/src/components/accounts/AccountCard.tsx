@@ -12,22 +12,28 @@ type AccountCardProps = {
 export function AccountCard({ account }: AccountCardProps) {
     return (
         <Card className="flex h-full flex-col gap-4">
-            <div className="flex items-center gap-3">
-                <AccountTypeIcon accountType={account.account_type} />
-                <div className="min-w-0">
-                    <h3 className="truncate text-body font-bold text-text-primary">
-                        {account.name}
-                    </h3>
-                    <AccountTypeBadge
-                        accountType={account.account_type}
-                        isActive={account.is_active}
-                    />
+            <Link
+                to={`/accounts/${account.id}/envelopes`}
+                aria-label={`Open envelopes for ${account.name}`}
+                className="flex min-w-0 flex-col gap-4 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+            >
+                <div className="flex items-center gap-3">
+                    <AccountTypeIcon accountType={account.account_type} />
+                    <div className="min-w-0">
+                        <h3 className="truncate text-body font-bold text-text-primary">
+                            {account.name}
+                        </h3>
+                        <AccountTypeBadge
+                            accountType={account.account_type}
+                            isActive={account.is_active}
+                        />
+                    </div>
                 </div>
-            </div>
-            <AccountBalance
-                accountType={account.account_type}
-                balance={account.balance}
-            />
+                <AccountBalance
+                    accountType={account.account_type}
+                    balance={account.balance}
+                />
+            </Link>
             <Link
                 to={`/accounts/${account.id}/edit`}
                 aria-label={`Edit ${account.name}`}
