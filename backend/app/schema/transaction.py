@@ -1,3 +1,5 @@
+"""Pydantic schemas for transaction create payloads and API responses."""
+
 from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
@@ -15,7 +17,7 @@ class TransactionBase(BaseModel):
     amount: Decimal
     transaction_date: datetime
     category_id: UUID | None = None
-    description: str | None = Field(default=None, max_length=255)
+    description: str | None = None
 
 
 class TransactionCreate(TransactionBase):
@@ -23,6 +25,7 @@ class TransactionCreate(TransactionBase):
 
     amount: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
     transaction_date: AwareDatetime
+    description: str | None = Field(default=None, max_length=255)
 
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
