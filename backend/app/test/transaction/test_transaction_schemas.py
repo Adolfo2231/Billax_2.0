@@ -149,6 +149,21 @@ def test_transaction_create_rejects_extra_fields():
         )
 
 
+def test_transaction_create_rejects_category_id():
+    """Reject category_id until Categories CRUD is available."""
+
+    with pytest.raises(ValidationError) as exc_info:
+        TransactionCreate(
+            account_id=uuid4(),
+            transaction_type=TransactionType.EXPENSE,
+            amount=Decimal("10.00"),
+            transaction_date=datetime.now(UTC),
+            category_id=uuid4(),
+        )
+
+    assert "category_id is not supported yet" in str(exc_info.value)
+
+
 def test_transaction_create_rejects_naive_transaction_date():
     """Reject a transaction_date without timezone information."""
 
