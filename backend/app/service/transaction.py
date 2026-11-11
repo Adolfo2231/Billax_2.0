@@ -39,3 +39,8 @@ class TransactionService:
         new_transaction = Transaction(**transaction_data.model_dump())
 
         return self.transaction_repository.create(new_transaction)
+
+    def list_transactions(self, user_id: UUID) -> list[Transaction]:
+        """Return all transactions for accounts owned by the specified user."""
+
+        return self.transaction_repository.get_all_by_user_id(user_id)

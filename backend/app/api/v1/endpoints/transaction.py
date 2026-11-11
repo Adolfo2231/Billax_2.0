@@ -33,3 +33,20 @@ def create_transaction(
         current_user.id,
     )
     return TransactionResponse.model_validate(created_transaction)
+
+
+@router.get(
+    "/",
+    response_model=list[TransactionResponse],
+    status_code=status.HTTP_200_OK,
+)
+def list_transactions(
+    current_user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[TransactionService, Depends(get_transaction_service)],
+) -> list[TransactionResponse]:
+    """Return every transaction owned by the authenticated user."""
+
+    transactions = service.list_transactions(current_user.id)
+    return [
+        TransactionResponse.model_validate(transaction) for transaction in transactions
+    ]
