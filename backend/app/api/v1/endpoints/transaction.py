@@ -91,3 +91,17 @@ def update_transaction(
         transaction_data,
     )
     return TransactionResponse.model_validate(transaction)
+
+
+@router.delete(
+    "/{transaction_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_transaction(
+    current_user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[TransactionService, Depends(get_transaction_service)],
+    transaction_id: UUID,
+) -> None:
+    """Soft-delete a transaction owned by the authenticated user."""
+
+    service.delete_transaction(current_user.id, transaction_id)
