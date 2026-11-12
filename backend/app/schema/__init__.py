@@ -1,6 +1,7 @@
 """Public exports for Pydantic schemas."""
 
 from .account import AccountCreate, AccountResponse, AccountType, AccountUpdate
+from .category import CategoryCreate, CategoryResponse, CategoryUpdate
 from .transaction import (
     TransactionCreate,
     TransactionResponse,
@@ -14,6 +15,9 @@ __all__ = [
     "AccountResponse",
     "AccountType",
     "AccountUpdate",
+    "CategoryCreate",
+    "CategoryResponse",
+    "CategoryUpdate",
     "LoginResponse",
     "TransactionCreate",
     "TransactionResponse",
