@@ -80,3 +80,17 @@ class TransactionService:
             setattr(transaction, key, value)
 
         return self.transaction_repository.update(transaction)
+
+    def delete_transaction(self, user_id: UUID, transaction_id: UUID) -> None:
+        """Soft-delete an owned transaction, or raise when it cannot be found."""
+
+        transaction = self.transaction_repository.get_transaction_by_id(
+            user_id,
+            transaction_id,
+        )
+
+        if transaction is None:
+            raise TransactionNotFoundError()
+
+        transaction.is_active = False
+        self.transaction_repository.update(transaction)
