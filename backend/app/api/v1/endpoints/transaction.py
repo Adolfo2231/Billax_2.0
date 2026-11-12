@@ -11,7 +11,7 @@ from fastapi import APIRouter, Depends, status
 
 from app.api.v1.dependencies import get_current_user, get_transaction_service
 from app.models import User
-from app.schema import TransactionCreate, TransactionResponse
+from app.schema import TransactionCreate, TransactionResponse, TransactionUpdate
 from app.service import TransactionService
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
@@ -68,5 +68,26 @@ def get_transaction(
     transaction = service.get_transaction(
         current_user.id,
         transaction_id,
+    )
+    return TransactionResponse.model_validate(transaction)
+
+
+@router.patch(
+    "/{transaction_id}",
+    response_model=TransactionResponse,
+    status_code=status.HTTP_200_OK,
+)
+def update_transaction(
+    current_user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[TransactionService, Depends(get_transaction_service)],
+    transaction_id: UUID,
+    transaction_data: TransactionUpdate,
+) -> TransactionResponse:
+    """Partially update a transaction owned by the authenticated user."""
+
+    transaction = service.update_transaction(
+        current_user.id,
+        transaction_id,
+        transaction_data,
     )
     return TransactionResponse.model_validate(transaction)

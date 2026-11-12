@@ -75,6 +75,7 @@ def test_get_transaction_by_id_returns_404_for_different_user(
     )
 
     assert response.status_code == 404
+    assert response.json()["detail"] == "Transaction not found"
 
 
 def test_get_transaction_by_id_returns_404_when_transaction_does_not_exist(
@@ -91,3 +92,4 @@ def test_get_transaction_by_id_returns_404_when_transaction_does_not_exist(
     )
 
     assert response.status_code == 404
+    assert response.json()["detail"] == "Transaction not found"

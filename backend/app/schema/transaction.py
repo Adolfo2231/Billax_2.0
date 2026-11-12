@@ -60,3 +60,37 @@ class TransactionResponse(TransactionBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TransactionUpdate(BaseModel):
+    """Partial update payload. account_id and category_id are not editable."""
+
+    transaction_type: TransactionType | None = None
+    amount: Decimal | None = Field(
+        default=None,
+        gt=0,
+        max_digits=12,
+        decimal_places=2,
+    )
+    transaction_date: AwareDatetime | None = None
+    description: str | None = Field(default=None, max_length=255)
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    @field_validator("transaction_type", "amount", "transaction_date")
+    @classmethod
+    def reject_explicit_null(cls, value: object) -> object:
+        """Reject JSON null. An omitted field keeps its default and skips this."""
+
+        if value is None:
+            raise ValueError("null is not allowed")
+        return value
+
+    @field_validator("description")
+    @classmethod
+    def empty_description_to_none(cls, value: str | None) -> str | None:
+        """Store blank descriptions as None after whitespace strip."""
+
+        if value == "":
+            return None
+        return value
