@@ -24,7 +24,10 @@ class TransactionRepository(BaseRepository[Transaction]):
         statement = (
             select(Transaction)
             .join(Account, Transaction.account_id == Account.id)
-            .where(Account.user_id == user_id)
+            .where(
+                Account.user_id == user_id,
+                Transaction.is_active.is_(True),
+            )
             .order_by(
                 Transaction.transaction_date.desc(),
                 Transaction.created_at.desc(),
@@ -47,6 +50,7 @@ class TransactionRepository(BaseRepository[Transaction]):
             .where(
                 Account.user_id == user_id,
                 Transaction.id == transaction_id,
+                Transaction.is_active.is_(True),
             )
         )
         result = self.db.execute(statement)
