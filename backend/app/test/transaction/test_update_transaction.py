@@ -172,3 +172,104 @@ def test_update_transaction_clears_description_with_null(
     assert data["amount"] == created["amount"]
     assert data["transaction_type"] == created["transaction_type"]
     assert data["transaction_date"] == created["transaction_date"]
+
+
+def test_update_transaction_with_owned_category(
+    client,
+    authenticated_user,
+    account_owned,
+):
+    """Allow assigning an owned active category on update."""
+
+    created = _create_transaction(
+        client,
+        authenticated_user["headers"],
+        account_owned["id"],
+    )
+
+    category = client.post(
+        "/api/v1/categories/",
+        headers=authenticated_user["headers"],
+        json={"name": "Food"},
+    )
+    assert category.status_code == 201
+    category_id = category.json()["id"]
+
+    response = client.patch(
+        f"/api/v1/transactions/{created['id']}",
+        headers=authenticated_user["headers"],
+        json={"category_id": category_id},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["category_id"] == category_id
+
+
+def test_update_transaction_clears_category_with_null(
+    client,
+    authenticated_user,
+    account_owned,
+):
+    """Allow explicit null on category_id to unlink an optional category."""
+
+    category = client.post(
+        "/api/v1/categories/",
+        headers=authenticated_user["headers"],
+        json={"name": "Food"},
+    )
+    assert category.status_code == 201
+    category_id = category.json()["id"]
+
+    created = client.post(
+        "/api/v1/transactions/",
+        headers=authenticated_user["headers"],
+        json={
+            "account_id": account_owned["id"],
+            "transaction_type": "expense",
+            "amount": "50.00",
+            "transaction_date": "2026-11-10T15:00:00Z",
+            "category_id": category_id,
+        },
+    )
+    assert created.status_code == 201
+    assert created.json()["category_id"] == category_id
+
+    response = client.patch(
+        f"/api/v1/transactions/{created.json()['id']}",
+        headers=authenticated_user["headers"],
+        json={"category_id": None},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["category_id"] is None
+
+
+def test_update_transaction_returns_404_for_foreign_category(
+    client,
+    authenticated_user,
+    other_authenticated_user,
+    account_owned,
+):
+    """Reject update when category_id belongs to another user."""
+
+    created = _create_transaction(
+        client,
+        authenticated_user["headers"],
+        account_owned["id"],
+    )
+
+    foreign = client.post(
+        "/api/v1/categories/",
+        headers=other_authenticated_user["headers"],
+        json={"name": "Other Food"},
+    )
+    assert foreign.status_code == 201
+
+    response = client.patch(
+        f"/api/v1/transactions/{created['id']}",
+        headers=authenticated_user["headers"],
+        json={"category_id": foreign.json()["id"]},
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Category not found"
