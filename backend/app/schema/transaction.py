@@ -29,18 +29,6 @@ class TransactionCreate(TransactionBase):
 
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
-    @field_validator("category_id")
-    @classmethod
-    def reject_category_id_until_categories_exist(
-        cls,
-        value: UUID | None,
-    ) -> UUID | None:
-        """Reject category_id until Categories CRUD is available."""
-
-        if value is not None:
-            raise ValueError("category_id is not supported yet; omit it or send null")
-        return value
-
     @field_validator("description")
     @classmethod
     def empty_description_to_none(cls, value: str | None) -> str | None:
@@ -63,7 +51,11 @@ class TransactionResponse(TransactionBase):
 
 
 class TransactionUpdate(BaseModel):
-    """Partial update payload. account_id and category_id are not editable."""
+    """Partial update payload. account_id is not editable.
+
+    Explicit ``category_id: null`` clears the category (optional field).
+    Omitting ``category_id`` leaves the current value unchanged.
+    """
 
     transaction_type: TransactionType | None = None
     amount: Decimal | None = Field(
@@ -73,6 +65,7 @@ class TransactionUpdate(BaseModel):
         decimal_places=2,
     )
     transaction_date: AwareDatetime | None = None
+    category_id: UUID | None = None
     description: str | None = Field(default=None, max_length=255)
 
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
