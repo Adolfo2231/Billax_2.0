@@ -20,11 +20,15 @@
     --color-border: #e8e4dd; /* Input borders, card borders, and dividers. */
     --color-danger: #f87171; /* Expenses, liabilities, errors, and destructive feedback. */
 
-    /* Dark surfaces (Envelopes and future dark screens). Same tokens on mobile and desktop. */
+    /* Dark surfaces (Envelopes, auth, and future dark screens). Same tokens on mobile and desktop. */
     --color-dark-canvas: #000000; /* Full-bleed dark page background. */
-    --color-dark-surface: #1c1c1e; /* Envelope rows, selectors, and secondary cards. */
-    --color-dark-surface-balance: #141816; /* Account balance featured card. */
-    --color-dark-accent: #34d399; /* Primary accent on dark backgrounds. */
+    --color-dark-surface: #1c1c1e; /* Envelope rows, selectors, auth card, and secondary cards. */
+    --color-dark-surface-balance: #141816; /* Account balance / net worth featured card. */
+    --color-dark-input: #0d0d0d; /* Auth inputs and inset fields on dark backgrounds. */
+    --color-dark-accent: #34d399; /* Primary accent on dark backgrounds (buttons, links, logo). */
+    --color-dark-on-accent: #0a0a0a; /* Text on dark-accent buttons. */
+    --color-dark-text-secondary: #a0a0a0; /* Subtitles, labels, and muted text on dark. */
+    --color-dark-border: #1a1a1a; /* Card and input borders on dark backgrounds. */
     --color-dark-track: #2a2a2c; /* Progress bar track on dark surfaces. */
 
     /* Base family. Inter is used when the font is loaded; otherwise the stack continues. */
@@ -82,6 +86,9 @@
     /* Card and panel shadow. Utility: shadow-card. */
     --shadow-card: 0 1px 2px rgb(33 31 26 / 5%), 0 4px 12px rgb(33 31 26 / 4%);
 
-    /* Soft green glow on the dark balance card. Utility: shadow-balance-glow. */
+    /* Soft green glow inside the dark balance card. Utility: shadow-balance-glow. */
     --shadow-balance-glow: inset 0 0 80px rgb(52 211 153 / 12%);
+
+    /* Green outer glow for auth / marketing dark cards. Utility: shadow-accent-glow. */
+    --shadow-accent-glow: 0 0 20px rgb(52 211 153 / 28%), 0 0 48px rgb(52 211 153 / 14%);
 }
