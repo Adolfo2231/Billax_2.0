@@ -8,8 +8,18 @@ from sqlalchemy.orm import Session
 
 from app.database.dependencies import get_db
 from app.models import User
-from app.repositories import AccountRepository, TransactionRepository, UserRepository
-from app.service import AccountService, TransactionService, UserService
+from app.repositories import (
+    AccountRepository,
+    CategoryRepository,
+    TransactionRepository,
+    UserRepository,
+)
+from app.service import (
+    AccountService,
+    CategoryService,
+    TransactionService,
+    UserService,
+)
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/login",
@@ -42,6 +52,16 @@ def get_account_service(
     repository = AccountRepository(db)
 
     return AccountService(repository)
+
+
+def get_category_service(
+    db: Annotated[Session, Depends(get_db)],
+) -> CategoryService:
+    """Provide a CategoryService instance wired with a database session."""
+
+    repository = CategoryRepository(db)
+
+    return CategoryService(repository)
 
 
 def get_transaction_service(
