@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from app.core.exception import (
     AccountNotFoundError,
     AuthenticationError,
+    CategoryAlreadyExistsError,
     CategoryNotFoundError,
     LongPasswordError,
     TransactionNotFoundError,
@@ -49,11 +50,11 @@ async def transaction_not_found_handler(
     )
 
 
-async def user_already_exists_handler(
+async def conflict_error_handler(
     request: Request,
-    exc: UserAlreadyExistsError,
+    exc: UserAlreadyExistsError | CategoryAlreadyExistsError,
 ) -> JSONResponse:
-    """Return a 409 response when registration email already exists."""
+    """Return a 409 response when a unique resource already exists."""
     return JSONResponse(
         status_code=status.HTTP_409_CONFLICT,
         content={"detail": exc.message},
@@ -101,7 +102,11 @@ def register_exception_handlers(app: FastAPI) -> None:
     )
     app.add_exception_handler(
         UserAlreadyExistsError,
-        user_already_exists_handler,
+        conflict_error_handler,
+    )
+    app.add_exception_handler(
+        CategoryAlreadyExistsError,
+        conflict_error_handler,
     )
 
     app.add_exception_handler(
