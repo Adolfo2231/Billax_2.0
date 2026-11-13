@@ -1,13 +1,14 @@
 import { Spinner } from "./Spinner";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    variant?: 'primary' | 'secondary';
+    variant?: 'primary' | 'secondary' | 'dark';
     loading?: boolean;
 };
 
 const variantClassName = {
     primary: "bg-brand-600 text-surface hover:bg-brand-700",
     secondary: "border border-border bg-surface text-text-primary hover:bg-surface-muted",
+    dark: "bg-dark-accent text-dark-on-accent hover:brightness-110 focus-visible:ring-dark-accent",
 };
 
 export function Button({
