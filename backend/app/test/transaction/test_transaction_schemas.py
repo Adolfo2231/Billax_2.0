@@ -149,19 +149,20 @@ def test_transaction_create_rejects_extra_fields():
         )
 
 
-def test_transaction_create_rejects_category_id():
-    """Reject category_id until Categories CRUD is available."""
+def test_transaction_create_accepts_category_id():
+    """Accept an optional category_id on create payloads."""
 
-    with pytest.raises(ValidationError) as exc_info:
-        TransactionCreate(
-            account_id=uuid4(),
-            transaction_type=TransactionType.EXPENSE,
-            amount=Decimal("10.00"),
-            transaction_date=datetime.now(UTC),
-            category_id=uuid4(),
-        )
+    category_id = uuid4()
 
-    assert "category_id is not supported yet" in str(exc_info.value)
+    transaction = TransactionCreate(
+        account_id=uuid4(),
+        transaction_type=TransactionType.EXPENSE,
+        amount=Decimal("10.00"),
+        transaction_date=datetime.now(UTC),
+        category_id=category_id,
+    )
+
+    assert transaction.category_id == category_id
 
 
 def test_transaction_create_rejects_naive_transaction_date():

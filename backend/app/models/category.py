@@ -3,7 +3,7 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Index, func, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -26,6 +26,16 @@ class Category(BaseModel):
     name: Mapped[str] = mapped_column(nullable=False)
 
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True)
+
+    __table_args__ = (
+        Index(
+            "ix_categories_user_id_name_lower",
+            user_id,
+            func.lower(name),
+            unique=True,
+            postgresql_where=text("is_active"),
+        ),
+    )
 
     user: Mapped["User"] = relationship(back_populates="categories")
 

@@ -98,12 +98,117 @@ def test_create_transaction_returns_404_when_account_does_not_exist(
     assert response.status_code == 404
 
 
-def test_create_transaction_rejects_category_id(
+def test_create_transaction_with_owned_category(
     client,
     authenticated_user,
     account_owned,
 ):
-    """Reject create payloads that include a category_id."""
+    """Create a transaction linked to a category owned by the user."""
+
+    category = client.post(
+        "/api/v1/categories/",
+        headers=authenticated_user["headers"],
+        json={"name": "Food"},
+    )
+    assert category.status_code == 201
+    category_id = category.json()["id"]
+
+    payload = {
+        "account_id": account_owned["id"],
+        "transaction_type": "expense",
+        "amount": "15.00",
+        "transaction_date": "2026-11-10T15:00:00Z",
+        "category_id": category_id,
+    }
+
+    response = client.post(
+        "/api/v1/transactions/",
+        headers=authenticated_user["headers"],
+        json=payload,
+    )
+
+    assert response.status_code == 201
+    assert response.json()["category_id"] == category_id
+
+
+def test_create_transaction_returns_404_for_foreign_category(
+    client,
+    authenticated_user,
+    other_authenticated_user,
+    account_owned,
+):
+    """Reject create when category_id belongs to another user."""
+
+    foreign = client.post(
+        "/api/v1/categories/",
+        headers=other_authenticated_user["headers"],
+        json={"name": "Other Food"},
+    )
+    assert foreign.status_code == 201
+
+    payload = {
+        "account_id": account_owned["id"],
+        "transaction_type": "expense",
+        "amount": "15.00",
+        "transaction_date": "2026-11-10T15:00:00Z",
+        "category_id": foreign.json()["id"],
+    }
+
+    response = client.post(
+        "/api/v1/transactions/",
+        headers=authenticated_user["headers"],
+        json=payload,
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Category not found"
+
+
+def test_create_transaction_returns_404_for_inactive_category(
+    client,
+    authenticated_user,
+    account_owned,
+):
+    """Reject create when category_id points to a deactivated category."""
+
+    category = client.post(
+        "/api/v1/categories/",
+        headers=authenticated_user["headers"],
+        json={"name": "Inactive Food"},
+    )
+    assert category.status_code == 201
+    category_id = category.json()["id"]
+
+    deleted = client.delete(
+        f"/api/v1/categories/{category_id}",
+        headers=authenticated_user["headers"],
+    )
+    assert deleted.status_code == 204
+
+    payload = {
+        "account_id": account_owned["id"],
+        "transaction_type": "expense",
+        "amount": "15.00",
+        "transaction_date": "2026-11-10T15:00:00Z",
+        "category_id": category_id,
+    }
+
+    response = client.post(
+        "/api/v1/transactions/",
+        headers=authenticated_user["headers"],
+        json=payload,
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Category not found"
+
+
+def test_create_transaction_returns_404_for_missing_category(
+    client,
+    authenticated_user,
+    account_owned,
+):
+    """Reject create when category_id does not exist."""
 
     payload = {
         "account_id": account_owned["id"],
@@ -119,4 +224,5 @@ def test_create_transaction_rejects_category_id(
         json=payload,
     )
 
-    assert response.status_code == 422
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Category not found"

@@ -67,9 +67,14 @@ def get_category_service(
 def get_transaction_service(
     db: Annotated[Session, Depends(get_db)],
 ) -> TransactionService:
-    """Provide a TransactionService with transaction and account repositories."""
+    """Provide a TransactionService with transaction, account, and category repos."""
 
     transaction_repository = TransactionRepository(db)
     account_repository = AccountRepository(db)
+    category_repository = CategoryRepository(db)
 
-    return TransactionService(transaction_repository, account_repository)
+    return TransactionService(
+        transaction_repository,
+        account_repository,
+        category_repository,
+    )

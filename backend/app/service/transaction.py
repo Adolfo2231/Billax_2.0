@@ -2,9 +2,17 @@
 
 from uuid import UUID
 
-from app.core.exception import AccountNotFoundError, TransactionNotFoundError
+from app.core.exception import (
+    AccountNotFoundError,
+    CategoryNotFoundError,
+    TransactionNotFoundError,
+)
 from app.models import Transaction
-from app.repositories import AccountRepository, TransactionRepository
+from app.repositories import (
+    AccountRepository,
+    CategoryRepository,
+    TransactionRepository,
+)
 from app.schema import TransactionCreate, TransactionUpdate
 
 
@@ -15,11 +23,25 @@ class TransactionService:
         self,
         transaction_repository: TransactionRepository,
         account_repository: AccountRepository,
+        category_repository: CategoryRepository,
     ) -> None:
-        """Initialize the service with transaction and account repositories."""
+        """Initialize the service with transaction, account, and category repos."""
 
         self.transaction_repository = transaction_repository
         self.account_repository = account_repository
+        self.category_repository = category_repository
+
+    def _require_owned_active_category(
+        self,
+        user_id: UUID,
+        category_id: UUID,
+    ) -> None:
+        """Raise when the category is missing, foreign, or inactive."""
+
+        category = self.category_repository.get_category_by_id(user_id, category_id)
+
+        if category is None:
+            raise CategoryNotFoundError()
 
     def create_transaction(
         self,
@@ -35,6 +57,9 @@ class TransactionService:
 
         if account is None:
             raise AccountNotFoundError()
+
+        if transaction_data.category_id is not None:
+            self._require_owned_active_category(user_id, transaction_data.category_id)
 
         new_transaction = Transaction(**transaction_data.model_dump())
 
@@ -75,6 +100,10 @@ class TransactionService:
             raise TransactionNotFoundError()
 
         update_data = transaction_data.model_dump(exclude_unset=True)
+
+        category_id = update_data.get("category_id")
+        if category_id is not None:
+            self._require_owned_active_category(user_id, category_id)
 
         for key, value in update_data.items():
             setattr(transaction, key, value)
