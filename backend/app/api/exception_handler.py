@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from app.core.exception import (
     AccountNotFoundError,
     AuthenticationError,
+    CategoryNotFoundError,
     LongPasswordError,
     TransactionNotFoundError,
     UserAlreadyExistsError,
@@ -17,6 +18,18 @@ async def account_not_found_handler(
     exc: AccountNotFoundError,
 ) -> JSONResponse:
     """Return a 404 response when an owned account cannot be found."""
+
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"detail": exc.message},
+    )
+
+
+async def category_not_found_handler(
+    request: Request,
+    exc: CategoryNotFoundError,
+) -> JSONResponse:
+    """Return a 404 response when an owned category cannot be found."""
 
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
@@ -77,6 +90,10 @@ def register_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(
         AccountNotFoundError,
         account_not_found_handler,
+    )
+    app.add_exception_handler(
+        CategoryNotFoundError,
+        category_not_found_handler,
     )
     app.add_exception_handler(
         TransactionNotFoundError,
