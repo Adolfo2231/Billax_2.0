@@ -38,10 +38,10 @@ export function DashboardPage() {
                 <NetWorthCard totals={computeTotals(activeAccounts)} />
                 <section className="flex w-full min-w-0 flex-col gap-4">
                     <div className="flex items-center justify-between gap-4">
-                        <h2 className="text-h2 text-text-primary">Your accounts</h2>
+                        <h2 className="text-h2 text-white">Your accounts</h2>
                         <Link
                             to="/accounts"
-                            className="inline-flex min-h-7 shrink-0 items-center text-small font-medium text-brand-600 hover:text-brand-700 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+                            className="inline-flex min-h-7 shrink-0 items-center text-small font-medium text-dark-accent hover:brightness-110 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark-accent focus-visible:ring-offset-2 focus-visible:ring-offset-dark-canvas"
                         >
                             View all
                         </Link>
@@ -54,7 +54,7 @@ export function DashboardPage() {
 
     return (
         <div className="flex w-full min-w-0 flex-col gap-5">
-            <h1 className="text-h1 text-text-primary">Welcome, {label}</h1>
+            <h1 className="text-h1 text-white">Welcome, {label}</h1>
             {renderAccounts()}
         </div>
     )
