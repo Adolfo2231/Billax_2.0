@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
-import { DashboardLayout } from '../components/layout/DashboardLayout'
+import { AppLayout } from '../components/layout/AppLayout'
 import { AuthProvider } from '../hooks/AuthProvider'
 import { AccountsPage } from '../pages/AccountsPage'
 import { CreateAccountPage } from '../pages/CreateAccountPage'
@@ -23,15 +23,15 @@ export function AppRouter() {
                         <Route path="/register" element={<RegisterPage />} />
                     </Route>
                     <Route element={<ProtectedRoute />}>
-                        <Route
-                            path="/accounts/:id/envelopes"
-                            element={<EnvelopesPage />}
-                        />
-                        <Route element={<DashboardLayout />}>
+                        <Route element={<AppLayout />}>
                             <Route path="/dashboard" element={<DashboardPage />} />
                             <Route path="/accounts" element={<AccountsPage />} />
                             <Route path="/accounts/new" element={<CreateAccountPage />} />
                             <Route path="/accounts/:id/edit" element={<EditAccountPage />} />
+                            <Route
+                                path="/accounts/:id/envelopes"
+                                element={<EnvelopesPage />}
+                            />
                         </Route>
                     </Route>
                     <Route path="*" element={<SessionRedirect />} />
