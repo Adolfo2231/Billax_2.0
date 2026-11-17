@@ -35,7 +35,7 @@ export function AccountsPage() {
             <>
                 <NetWorthCard totals={computeTotals(activeAccounts)} />
                 <section className="flex w-full min-w-0 flex-col gap-4">
-                    <h2 className="text-h2 text-text-primary">
+                    <h2 className="text-h2 text-white">
                         Your accounts
                     </h2>
                     <AccountList accounts={activeAccounts} />
@@ -49,8 +49,8 @@ export function AccountsPage() {
         <div className="flex w-full min-w-0 flex-col gap-5">
             <header className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
-                    <h1 className="text-h1 text-text-primary">My Accounts</h1>
-                    <p className="mt-1 text-small text-text-secondary">
+                    <h1 className="text-h1 text-white">My Accounts</h1>
+                    <p className="mt-1 text-small text-dark-text-secondary">
                         Manage your financial accounts and balances.
                     </p>
                 </div>
