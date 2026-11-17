@@ -57,10 +57,10 @@ export function EditAccountPage() {
     if (notFound) {
         return (
             <div className="mx-auto flex w-full max-w-2xl flex-col items-start gap-4">
-                <p className="text-body text-text-primary">Account not found</p>
+                <p className="text-body text-white">Account not found</p>
                 <Link
                     to="/accounts"
-                    className="inline-flex min-h-[44px] items-center text-small font-medium text-brand-600 hover:text-brand-700 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+                    className="inline-flex min-h-[44px] items-center text-small font-medium text-dark-accent hover:brightness-110 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark-accent focus-visible:ring-offset-2 focus-visible:ring-offset-dark-canvas"
                 >
                     Back to accounts
                 </Link>
@@ -79,7 +79,7 @@ export function EditAccountPage() {
 
     return (
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-            <h1 className="text-h1 text-text-primary">Edit account</h1>
+            <h1 className="text-h1 text-white">Edit account</h1>
 
             <Card>
                 <AccountForm

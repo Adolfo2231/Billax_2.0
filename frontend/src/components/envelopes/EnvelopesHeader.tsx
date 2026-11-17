@@ -15,7 +15,7 @@ export function EnvelopesHeader({ accountName, onAdd }: EnvelopesHeaderProps) {
                 <Link
                     to="/accounts"
                     aria-label="Back to accounts"
-                    className="grid size-[44px] place-items-center rounded-md text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34d399]"
+                    className="grid size-[44px] place-items-center rounded-md text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark-accent"
                 >
                     <svg
                         aria-hidden="true"
@@ -39,7 +39,7 @@ export function EnvelopesHeader({ accountName, onAdd }: EnvelopesHeaderProps) {
                     type="button"
                     aria-label="Add envelope"
                     onClick={onAdd}
-                    className="grid size-[44px] place-items-center rounded-md text-[#34d399] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34d399]"
+                    className="grid size-[44px] place-items-center rounded-md text-dark-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark-accent"
                 >
                     <svg
                         aria-hidden="true"

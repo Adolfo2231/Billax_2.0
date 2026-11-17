@@ -17,7 +17,7 @@ export function EnvelopeRow({ envelope }: EnvelopeRowProps) {
     return (
         <button
             type="button"
-            className="flex h-full w-full items-center gap-3 rounded-xl bg-[#1c1c1e] px-3 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34d399] lg:gap-4 lg:px-4 lg:py-4"
+            className="flex h-full w-full items-center gap-3 rounded-xl bg-dark-surface px-3 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark-accent lg:gap-4 lg:px-4 lg:py-4"
         >
             <EnvelopeIcon icon={envelope.icon} color={envelope.color} />
 

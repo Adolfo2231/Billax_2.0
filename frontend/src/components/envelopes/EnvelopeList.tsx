@@ -22,7 +22,7 @@ export function EnvelopeList({
                 <button
                     type="button"
                     onClick={onEdit}
-                    className="min-h-[44px] px-2 text-small font-medium text-[#34d399] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34d399]"
+                    className="min-h-[44px] px-2 text-small font-medium text-dark-accent focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark-accent"
                 >
                     Edit
                 </button>
