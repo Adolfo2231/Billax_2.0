@@ -27,7 +27,7 @@ export function CreateAccountPage() {
 
     return (
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-            <h1 className="text-h1 text-text-primary">Create account</h1>
+            <h1 className="text-h1 text-white">Create account</h1>
 
             <Card>
                 <AccountForm
