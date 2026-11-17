@@ -13,10 +13,10 @@ export function AccountSelector({
         <button
             type="button"
             className={[
-                'flex items-center justify-between gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34d399]',
+                'flex items-center justify-between gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark-accent',
                 isCompact
                     ? 'min-h-[44px] rounded-md border border-white/25 bg-transparent px-4 py-3'
-                    : 'w-full rounded-xl bg-[#1c1c1e] px-4 py-3',
+                    : 'w-full rounded-xl bg-dark-surface px-4 py-3',
             ].join(' ')}
         >
             <span
